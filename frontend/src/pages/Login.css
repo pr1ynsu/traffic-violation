@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root{
+  --accent: #E3D095;
+  --bg1: #07123a;
+  --bg2: #2a1e66;
+  --glass: rgba(255,255,255,0.06);
+  --glass-strong: rgba(255,255,255,0.10);
+  --muted: rgba(255,255,255,0.9);
+}
+
+/* Base */
+* { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+html,body,#root { height:100%; margin:0; }
+
+/* Page */
+.login-page {
+  min-height: 100vh;
+  position: relative;
+  background: linear-gradient(135deg, var(--bg1), var(--bg2));
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Background video */
+.bg-video { position: fixed; inset:0; width:100%; height:100%; object-fit:cover; z-index:-3; filter: saturate(1.05) brightness(0.85) contrast(0.97); }
+.overlay { position: fixed; inset:0; background: linear-gradient(180deg, rgba(2,6,25,0.45), rgba(5,12,35,0.55)); z-index:-2; backdrop-filter: blur(6px); }
+
+/* Header: only logo */
+.auth-header { width:100%; display:flex; justify-content:center; padding:22px 0 8px 0; z-index:4; }
+.auth-logo { width:140px; height:auto; object-fit:contain; border-radius:6px; box-shadow: 0 6px 20px rgba(0,0,0,0.45); }
+
+/* REGISTER SPLIT LAYOUT */
+.register-split {
+  margin: 24px;
+  width: min(1200px, 96%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: stretch;
+  z-index: 3;
+}
+
+/* Left pane (info) */
+.glass-left {
+  padding: 28px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px) saturate(1.05);
+  box-shadow: 0 14px 50px rgba(0,0,0,0.5);
+  color: var(--muted);
+  min-height: 520px;
+}
+
+.glass-left h2 { color: var(--accent); font-size: 1.6rem; margin-bottom: 12px; }
+.glass-left .bullets { margin: 14px 0; padding-left: 18px; list-style: none; color: rgba(227,208,149,0.95); }
+.glass-left .bullets li { margin: 10px 0; }
+.glass-left h3 { margin-top: 18px; color: var(--accent); }
+.glass-left .incentives { padding-left: 20px; margin-top:10px; color: rgba(227,208,149,0.95); }
+.glass-left .incentives li { margin: 8px 0; }
+
+/* Right pane (long form) */
+.glass-right {
+  padding: 18px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(12px) saturate(1.05);
+  box-shadow: 0 14px 50px rgba(0,0,0,0.5);
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Form title */
+.form-title { margin: 8px 0 12px 0; color: var(--accent); font-size: 1.5rem; }
+
+/* Scrollable form area */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 8px;
+  padding-bottom: 8px;
+}
+
+/* Inputs */
+.register-form input,
+.register-form select {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 0.98rem;
+  outline: none;
+}
+
+.register-form input::placeholder { color: rgba(255,255,255,0.6); }
+
+/* ====== Select styling fix ======
+   Make selected option readable across browsers:
+   - give the select a high-contrast background (accent) and dark text
+   - keep options styled reasonably (option styling is limited by browser)
+=================================*/
+.register-form select {
+  /* Use the accent background so selected value is readable */
+  background: linear-gradient(90deg, var(--accent), #f5dfb8);
+  color: #0E2148; /* dark text to contrast the warm accent */
+  font-weight: 600;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  position: relative;
+  padding-right: 40px; /* room for arrow */
+}
+
+/* custom arrow (simple) */
+.register-form select::-ms-expand { display: none; } /* hide default IE arrow */
+.register-form select::after { /* pseudo won't show for select in most browsers; we add an arrow using wrapper if needed */ }
+
+/* Try to style option text where supported */
+.register-form select option {
+  color: #0E2148;
+  background: white;
+}
+
+/* Submit */
+.submit-btn {
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: var(--accent);
+  color: #0E2148;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* form footer */
+.register-footer { margin-top: 10px; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.small-row { display:flex; gap:14px; margin-top:6px; }
+
+/* compact login view (centered single card) */
+.login-compact { margin: 40px 0; width: 100%; display:flex; justify-content:center; z-index:3; }
+.login-card { width: 420px; border-radius: 12px; padding: 26px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,0.06); backdrop-filter: blur(12px); box-shadow: 0 14px 50px rgba(0,0,0,0.5); }
+.login-title { color: var(--accent); text-align:left; font-size:1.25rem; margin-bottom:8px; }
+.compact-form { display:flex; flex-direction:column; gap:12px; }
+.compact-form input { padding: 10px 12px; border-radius:8px; background: rgba(255,255,255,0.06); border:none; color:#fff; }
+
+/* messages and actions */
+.msg { min-height:20px; color: rgba(255,255,255,0.9); text-align:center; }
+.msg.error { color: #ffb0b0; }
+.msg.success { color: #bdf0c6; }
+
+.compact-footer { margin-top: 10px; display:flex; flex-direction:column; gap:8px; }
+.compact-actions { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+
+/* ghost buttons */
+.ghost { padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.9); cursor:pointer; }
+
+/* custom scrollbar for right pane */
+.glass-right .register-form::-webkit-scrollbar { width: 12px; }
+.glass-right .register-form::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); border-radius: 8px; }
+.glass-right .register-form::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 8px; box-shadow: inset 0 0 0 3px rgba(0,0,0,0.09); }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .register-split { grid-template-columns: 1fr; width: 92%; }
+  .glass-left, .glass-right { min-height: auto; }
+  .auth-logo { width: 120px; }
+  .register-split { gap: 18px; }
+}

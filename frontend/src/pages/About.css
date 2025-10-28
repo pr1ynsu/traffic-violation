@@ -1,0 +1,115 @@
+/* About.css */
+
+.about-section {
+  background: #fffef4; /* Cream color that fits your theme */
+  padding: 80px 20px;
+  text-align: center;
+  transition: background-color 0.4s ease;
+}
+
+.about-title {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #1e3a8a;
+  transition: color 0.3s ease;
+}
+
+.about-description {
+  max-width: 700px;
+  margin: 0 auto 40px;
+  font-size: 1.1rem;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.about-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 10px;
+}
+
+.about-card {
+  background: rgba(252, 245, 202, 0.078);
+  padding: 25px;
+  width: 250px;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.about-card::after {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -100%;
+  left: -100%;
+  background: rgba(255, 255, 255, 0.05);
+  transform: rotate(25deg);
+  transition: all 0.4s ease;
+  pointer-events: none;
+}
+
+.about-card:hover::after {
+  top: 100%;
+  left: 100%;
+}
+
+.about-card h3 {
+  color: #1e40af;
+  margin-bottom: 10px;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.about-card p {
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: color 0.3s ease;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-description {
+    font-size: 1rem;
+    padding: 0 10px;
+  }
+
+  .about-card {
+    width: 90%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-title {
+    font-size: 1.75rem;
+  }
+
+  .about-description {
+    font-size: 0.95rem;
+  }
+
+  .about-card h3 {
+    font-size: 1rem;
+  }
+
+  .about-card p {
+    font-size: 0.9rem;
+  }
+}

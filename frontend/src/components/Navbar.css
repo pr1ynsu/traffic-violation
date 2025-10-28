@@ -1,0 +1,211 @@
+/* ==== Full Navbar (Home Page) ==== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 1rem 2rem;
+  z-index: 100;
+  font-family: serif;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box;
+
+  /* Glassmorphism background */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+  transition: transform 0.3s ease, background 0.3s ease;
+  overflow-x: hidden;
+}
+
+/* Navbar show/hide on scroll */
+.navbar-visible {
+  transform: translateY(0);
+}
+
+.navbar-hidden {
+  transform: translateY(-100%);
+}
+
+/* ==== Top Section (Logo Left, Buttons Right) ==== */
+.navbar-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+/* Left: Logo */
+.logo-container {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+.logo {
+  height: 50px;
+  width: auto;
+  max-width: 100%;
+}
+
+/* Right: Login/Signup */
+.login-container {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+.login-btn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #E3D095;
+  border: 1px solid rgba(227, 208, 149, 0.4);
+  padding: 0.6rem 1.2rem;
+  font-size: clamp(0.8rem, 1vw, 1rem);
+  border-radius: 50px;
+  backdrop-filter: blur(6px);
+  transition: 0.3s ease;
+  white-space: nowrap;
+}
+.login-btn:hover {
+  background: rgba(227, 208, 149, 0.2);
+  transform: scale(1.05);
+}
+
+/* ==== Nav Links (Center) ==== */
+.navbar-links {
+  margin-top: 0.5rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+.navbar-links ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.navbar-links ul li a {
+  text-decoration: none;
+  color: #E3D095;
+  font-size: clamp(0.8rem, 1.5vw, 1rem);
+  transition: transform 0.2s ease, text-shadow 0.2s ease;
+  white-space: nowrap;
+}
+.navbar-links ul li a:hover {
+  transform: scale(1.1);
+  text-shadow: 0 0 10px #E3D095;
+}
+
+/* ==== Floating Navbar (Other Pages) ==== */
+.floating-menu {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 200;
+}
+.menu-btn {
+  background: rgba(14, 33, 72, 0.9);
+  color: #E3D095;
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+.menu-btn:hover {
+  transform: scale(1.1);
+}
+.menu-items {
+  margin-top: 10px;
+  background: rgba(14, 33, 72, 0.8);
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: slideIn 0.3s ease-out;
+}
+.menu-items a {
+  color: #E3D095;
+  text-decoration: none;
+}
+.menu-items a:hover {
+  color: white;
+  transform: scale(1.05);
+}
+@keyframes slideIn {
+  from { transform: translateX(-10px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* === Responsive Tweaks === */
+@media screen and (max-width: 1024px) {
+  .logo {
+    height: 40px;
+  }
+  .navbar-links ul {
+    gap: 1.2rem;
+  }
+  .navbar-links ul li a {
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .navbar-top {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .login-container {
+    justify-content: flex-end;
+    flex: 1 1 auto;
+  }
+  .logo-container {
+    justify-content: flex-start;
+    flex: 1 1 auto;
+  }
+  .logo {
+    height: 35px;
+  }
+  .navbar-links ul {
+    gap: 1rem;
+  }
+  .login-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+  .navbar-links ul li a {
+    font-size: 0.85rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar-links ul {
+    gap: 0.8rem;
+  }
+  .navbar-links ul li a {
+    font-size: 0.8rem;
+  }
+  .login-btn {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.7rem;
+  }
+  .logo {
+    height: 30px;
+  }
+}

@@ -1,0 +1,251 @@
+/* RoleSelection.css — polished glass, motion, spacing, responsive */
+/* Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root{
+  --bg-deep-1: #061031;
+  --bg-deep-2: #2a1e66;
+  --glass-border: rgba(255,255,255,0.06);
+  --accent: #E3D095;
+  --muted: rgba(255,255,255,0.92);
+  --pill-bg: rgba(255,255,255,0.04);
+  --card-glow: rgba(10,22,60,0.45);
+  --max-width: 1100px;
+  --circle-size: 180px;       /* desktop: base circle size */
+  --circle-gap: clamp(28px, 6vw, 68px);
+  --title-top: 110px;
+}
+
+* { box-sizing: border-box; }
+html,body,#root { height:100%; margin:0; font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+
+/* page base */
+.role-selection {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: radial-gradient(1200px 600px at 10% 20%, rgba(90,60,180,0.12), transparent 8%),
+              linear-gradient(135deg, var(--bg-deep-1) 0%, var(--bg-deep-2) 100%);
+  color: var(--muted);
+}
+
+/* background video */
+.bg-video{
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -4;
+  filter: saturate(1.05) contrast(0.95) brightness(0.92);
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* darker overlay for depth */
+.bg-overlay{
+  position: fixed; inset: 0;
+  background: linear-gradient(180deg, rgba(3,7,25,0.46), rgba(6,12,35,0.62));
+  z-index: -3;
+  pointer-events: none;
+}
+
+/* top centered glass header */
+.role-header{
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(92%, var(--max-width));
+  border-radius: 12px;
+  padding: 10px 18px;
+  backdrop-filter: blur(10px) saturate(1.03);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 10px 40px var(--card-glow);
+  z-index: 20;
+  display:flex;
+  align-items:center;
+  justify-content:center; /* center CityWatch */
+}
+
+/* brand styling */
+.brand {
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+}
+
+/* main title */
+.role-title {
+  margin-top: var(--title-top);
+  color: var(--accent);
+  font-size: clamp(28px, 4.2vw, 48px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: center;
+  z-index: 10;
+  text-shadow: 0 6px 30px rgba(2,6,25,0.6);
+  transform: translateY(calc(var(--my, 0) * 0.35));
+  animation: titleIn .72s cubic-bezier(.2,.9,.3,1) both;
+}
+
+/* roles container */
+.roles-wrap {
+  width: 100%;
+  display:flex;
+  justify-content:center;
+  margin: 40px 0 120px 0;
+  z-index: 10;
+}
+.roles {
+  display:flex;
+  gap: var(--circle-gap);
+  align-items:center;
+  justify-content:center;
+  padding: 8px;
+}
+
+/* role circle (glass) */
+.role-circle {
+  width: var(--circle-size);
+  height: var(--circle-size);
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  user-select:none;
+  transition: transform .36s cubic-bezier(.2,.95,.3,1), box-shadow .36s, background .36s, filter .36s;
+  transform-origin: center;
+  border: 1.8px solid rgba(255,255,255,0.06);
+  box-shadow: 0 22px 60px rgba(2,6,25,0.6), inset 0 -6px 20px rgba(255,255,255,0.01);
+  animation: floatIn .64s var(--delay, 0ms) cubic-bezier(.2,.95,.3,1) both;
+  backdrop-filter: blur(10px) saturate(1.05);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  will-change: transform, box-shadow;
+  position: relative;
+  overflow: hidden;
+}
+
+/* slight inner glow ring */
+.role-circle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 30px rgba(255,255,255,0.015);
+  pointer-events: none;
+}
+
+/* make circles respond to parallax vars (--mx/--my) from JS */
+.role-circle { transform: translate(var(--mx, 0), var(--my, 0)); }
+
+/* inner content */
+.role-inner { text-align:center; padding: 12px; transform: translateZ(0); }
+.role-name { color: var(--accent); font-weight:700; font-size: 1.05rem; letter-spacing: 0.02em; }
+
+/* hover + focus */
+.role-circle:hover,
+.role-circle:focus {
+  transform: translate(calc(var(--mx, 0) * 1.1), calc(var(--my, 0) * 1.1)) translateY(-18px) scale(1.06);
+  box-shadow: 0 36px 100px rgba(2,6,25,0.78);
+  background: linear-gradient(180deg, rgba(227,208,149,0.06), rgba(255,255,255,0.02));
+  outline: none;
+}
+
+/* active press */
+.role-circle:active { transform: translateY(-6px) scale(.995); }
+
+/* pulse on click */
+.role-circle.pulse { animation: pulse .36s ease both; }
+@keyframes pulse {
+  0% { transform: scale(1); box-shadow: 0 20px 50px rgba(2,6,25,0.6); }
+  50% { transform: scale(1.06); box-shadow: 0 36px 100px rgba(2,6,25,0.8); }
+  100% { transform: scale(1); box-shadow: 0 20px 50px rgba(2,6,25,0.6); }
+}
+
+/* subtle inner label transition */
+.role-name { transition: transform .28s ease, color .28s ease; }
+.role-circle:hover .role-name { transform: translateY(-4px); color: #fff; }
+
+/* floating / entrance animation */
+@keyframes floatIn {
+  from { opacity: 0; transform: translateY(18px) scale(.985); filter: blur(.6px); }
+  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes titleIn {
+  from { opacity: 0; transform: translateY(-12px) scale(.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* bottom centered navigation bar — glass pill */
+.bottom-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 28px;
+  display:flex;
+  gap: 18px;
+  padding: 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.026), rgba(255,255,255,0.02));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px) saturate(1.02);
+  box-shadow: 0 22px 60px rgba(2,6,25,0.6);
+  z-index: 30;
+  align-items:center;
+  padding-left: 18px; padding-right: 18px;
+}
+.bar-btn {
+  background: transparent;
+  border: none;
+  padding: 12px 18px;
+  color: rgba(255,255,255,0.95);
+  font-weight:600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .18s, transform .12s, color .12s;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+.bar-btn:hover { background: rgba(255,255,255,0.04); transform: translateY(-3px); color: var(--accent); }
+.bar-btn:focus { outline: 2px solid rgba(227,208,149,0.18); outline-offset: 4px; }
+
+/* responsive sizes */
+@media (max-width: 980px) {
+  :root { --circle-size: 150px; --title-top: 90px; --circle-gap: 36px; }
+  .role-title { font-size: clamp(20px, 6vw, 34px); }
+  .bottom-bar { gap: 12px; padding: 8px; bottom: 20px; }
+  .bar-btn { padding: 10px 12px; font-size: 0.95rem; }
+}
+@media (max-width: 520px) {
+  :root { --circle-size: 140px; --title-top: 70px; --circle-gap: 22px; }
+  .roles { flex-direction: column; gap: 18px; margin-top: 24px; margin-bottom: 90px; }
+  .role-header { display:block; width: 86%; padding: 8px 12px; }
+  .role-title { margin-top: 60px; }
+  .bottom-bar { width: min(92%, 420px); padding-left: 12px; padding-right: 12px; }
+}
+
+/* accessibility: visible focus for keyboard users */
+.role-circle:focus-visible { box-shadow: 0 30px 90px rgba(2,6,25,0.8), 0 0 0 4px rgba(232,208,149,0.08); }
+
+/* small micro motion for background video (subtle) */
+@keyframes bgPulse {
+  0% { transform: scale(1); filter: saturate(1.05) contrast(0.95) brightness(0.92); }
+  50% { transform: scale(1.02); filter: saturate(1.06) contrast(1) brightness(0.94); }
+  100% { transform: scale(1); filter: saturate(1.05) contrast(0.95) brightness(0.92); }
+}
+.bg-video { animation: bgPulse 18s ease-in-out infinite; }
+
+/* small helper: use var(--mx/--my) on title for micro parallax */
+/* the component sets --mx/--my as px values; multiply down here */
+.role-title { transition: transform .24s cubic-bezier(.2,.9,.3,1); }
+
+/* end file */
