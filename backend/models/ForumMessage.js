@@ -1,12 +1,31 @@
+// backend/models/ForumMessage.js
 const mongoose = require('mongoose');
 
 const ForumMessageSchema = new mongoose.Schema({
-  roomId: { type: String, required: true, index: true },
-  authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  authorName: { type: String },
-  text: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now, index: true },
-  meta: { type: mongoose.Schema.Types.Mixed }
+  title: {
+    type: String,
+    required: [true, 'Title is required'],
+    trim: true,
+  },
+  content: {
+    type: String,
+    required: [true, 'Content is required'],
+    trim: true,
+  },
+  authorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Links post to user
+    required: false,
+  },
+  authorName: {
+    type: String,
+    default: 'Anonymous',
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('ForumMessage', ForumMessageSchema);
+

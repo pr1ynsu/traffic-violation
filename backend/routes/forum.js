@@ -1,21 +1,26 @@
+// backend/routes/forum.js
+
 const express = require('express');
-const { authMiddleware } = require('../middleware/auth');
-const ForumMessage = require('../models/ForumMessage');
 const router = express.Router();
+const forumController = require('../controllers/forum.controller');
+const { protect } = require('../middleware/auth');
 
-router.post('/rooms', authMiddleware, async (req, res) => {
-  const { roomId } = req.body;
-  if (!roomId) return res.status(400).json({ error: 'roomId required' });
-  res.json({ ok: true, roomId });
-});
+// Debug to confirm imports
+console.log("📂 Imported controllers (from forum.js):", forumController);
 
-router.get('/rooms/:roomId/messages', authMiddleware, async (req, res) => {
-  const { roomId } = req.params;
-  const { limit = 50, before } = req.query;
-  const q = { roomId };
-  if (before) q.createdAt = { $lt: new Date(before) };
-  const messages = await ForumMessage.find(q).sort({ createdAt: -1 }).limit(Number(limit)).lean();
-  res.json({ messages: messages.reverse() });
-});
+// Destructure after confirming import
+const { createPost, getAllPosts, getPostById, deletePost } = forumController;
+
+// ✅ Create a new forum post
+router.post('/', protect, createPost);
+
+// ✅ Get all forum posts
+router.get('/', getAllPosts);
+
+// ✅ Get a single post by ID
+router.get('/:id', getPostById);
+
+// ✅ Delete a post (admin or user)
+router.delete('/:id', protect, deletePost);
 
 module.exports = router;
