@@ -1,43 +1,62 @@
-// Forum.jsx (full-page, professional, avatar alignment fixed)
+// Forum.jsx — fixed: no alternating `short` class, keeps newline normalization and safe rendering
 import React, { useEffect, useRef, useState } from "react";
 import "./Forum.css";
 
 const USE_MOCK = true;
-const API_BASE = "http://localhost:5000";
 function nowISO() { return new Date().toISOString(); }
 function uid(prefix='m'){ return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`; }
+
+// HTML-escape to avoid XSS when we inject <br/> later
+function escapeHtml(str = "") {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+// Convert real newlines to <br/> and preserve text safely
+function formatTextToHtml(raw = "") {
+  let s = String(raw);
+  s = s.replace(/\\\\n/g, "\n");
+  s = s.replace(/\\n/g, "\n");
+  s = s.replace(/\/n/g, "\n");
+  s = s.replace(/\n{4,}/g, "\n\n\n");
+  return escapeHtml(s).replace(/\r\n|\r|\n/g, "<br/>");
+}
 
 export default function Forum() {
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
   const [profile, setProfile] = useState(null);
+
   const listRef = useRef(null);
   const fileRef = useRef(null);
   const composerRef = useRef(null);
   const wrapRef = useRef(null);
 
-  // Load seed messages
+  // seed messages on mount
   useEffect(() => {
     if (USE_MOCK) {
       const saved = JSON.parse(localStorage.getItem("forum_messages_v1") || "null");
       if (saved && Array.isArray(saved)) setMessages(saved);
       else {
         const seed = [
-          { _id: uid(), text: "Welcome to the full-page forum demo.", user: { id: "sys", name: "System" }, createdAt: nowISO() },
-          { _id: uid(), text: "Your messages appear on the right. Others are on the left.", user: { id: "sys2", name: "Moderator" }, createdAt: nowISO() }
+          { _id: uid(), text: "Welcome to the full-page forum demo.\nThis demo normalizes \\n and /n.", user: { id: "sys", name: "System" }, createdAt: nowISO() },
+          { _id: uid(), text: "Your messages appear on the right. Others are on the left.", user: { id: "mod", name: "Moderator" }, createdAt: nowISO() }
         ];
         setMessages(seed);
         localStorage.setItem("forum_messages_v1", JSON.stringify(seed));
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // scroll when messages change
+  // scroll on messages change
   useEffect(() => { scrollToBottom(); }, [messages]);
 
-  // measure composer height with ResizeObserver and expose as CSS var on wrapRef
+  // measure composer height (ResizeObserver) and expose as CSS var so list padding prevents overlap
   useEffect(() => {
     if (!composerRef.current || !wrapRef.current) return;
     const el = composerRef.current;
@@ -47,39 +66,55 @@ export default function Forum() {
       wrap.style.setProperty("--composer-height", `${h}px`);
     });
     ro.observe(el);
-    // initial set
     wrap.style.setProperty("--composer-height", `${el.offsetHeight || 72}px`);
     return () => ro.disconnect();
   }, []);
 
   function scrollToBottom(){
     const el = listRef.current;
-    if (el) setTimeout(() => el.scrollTop = el.scrollHeight, 50);
+    if (el) setTimeout(() => { el.scrollTop = el.scrollHeight; }, 40);
+  }
+
+  // normalize typed input in real-time
+  function handleTextChange(e){
+    const raw = e.target.value || "";
+    const normalized = raw.replace(/\\\\n/g, "\n").replace(/\\n/g, "\n").replace(/\/n/g, "\n");
+    setText(normalized);
   }
 
   function onFileChange(e){
     const list = Array.from(e.target.files).slice(0,4).map(f => Object.assign(f, { preview: URL.createObjectURL(f) }));
-    // cleanup previous previews
     files.forEach(f => f && f.preview && URL.revokeObjectURL(f.preview));
     setFiles(list);
   }
 
+  function prepareMessageTextForStorage(inputText = "") {
+    let s = String(inputText || "");
+    s = s.replace(/\\\\n/g, "\n").replace(/\\n/g, "\n").replace(/\/n/g, "\n");
+    s = s.replace(/\n{4,}/g, "\n\n\n");
+    return s;
+  }
+
   function handleSend(e){
     if (e) e.preventDefault();
-    if (!text.trim() && files.length === 0) return;
+    const cleanedText = prepareMessageTextForStorage(text);
+    if (!cleanedText.trim() && files.length === 0) return;
+
     const optimistic = {
       _id: uid("tmp"),
-      text: text.trim(),
+      text: cleanedText,
       attachments: files.map(f => ({ url: f.preview || URL.createObjectURL(f), filename: f.name, mime: f.type })),
       user: { id: "me", name: "You" },
       createdAt: nowISO(),
       optimistic: true
     };
+
     setMessages(prev => [...prev, optimistic]);
     setText("");
     if (fileRef.current) fileRef.current.value = "";
     setFiles([]);
     scrollToBottom();
+
     if (USE_MOCK) {
       setTimeout(() => {
         setMessages(prev => {
@@ -90,7 +125,7 @@ export default function Forum() {
       }, 300);
       return;
     }
-    // Real API path omitted (same as previous)
+    // real API omitted
   }
 
   function handleDelete(id){
@@ -105,8 +140,9 @@ export default function Forum() {
   function handleEdit(id){
     const cur = messages.find(m => m._id === id);
     if (!cur) return;
-    const newText = window.prompt("Edit message:", cur.text);
-    if (newText == null) return;
+    const raw = window.prompt("Edit message:", cur.text);
+    if (raw == null) return;
+    const newText = prepareMessageTextForStorage(raw);
     setMessages(prev => {
       const next = prev.map(m => m._id === id ? { ...m, text: newText, edited: true } : m);
       localStorage.setItem("forum_messages_v1", JSON.stringify(next));
@@ -116,7 +152,7 @@ export default function Forum() {
 
   function viewProfile(user){
     if (!user || !user.id) { window.alert("No profile"); return; }
-    setProfile({ name: user.name || "Unknown", email: user.id === "me" ? "you@local" : `${user.name?.toLowerCase()||'user'}@example.com`, mobile: "N/A" });
+    setProfile({ name: user.name || "Unknown", email: user.id === "me" ? "you@local" : `${(user.name||'user').toLowerCase()}@example.com`, mobile: "N/A" });
   }
 
   return (
@@ -127,11 +163,11 @@ export default function Forum() {
         <div className="forum-list-wrap" ref={wrapRef} role="region" aria-label="Forum messages">
           <div ref={listRef} className="forum-list" aria-live="polite">
             {messages.length === 0 && <div className="empty-msg">No messages yet — start chatting!</div>}
+
             {messages.map((m, i) => {
               const isMe = m.user?.id === 'me';
               return (
                 <div className={`message-row ${isMe ? 'me' : ''}`} key={m._id || i}>
-                  {/* avatar left for others, right for me — CSS ordering handles placement */}
                   <div className="avatar" onClick={() => viewProfile(m.user)} title={m.user?.name || "User"} role="button" tabIndex={0}>
                     { (m.user && m.user.name) ? m.user.name.slice(0,1).toUpperCase() : "U" }
                   </div>
@@ -143,9 +179,9 @@ export default function Forum() {
                       {m.edited && <div className="meta-edited">• edited</div>}
                     </div>
 
-                    <div className={i % 2 === 1 ? "message-bubble short" : "message-bubble"}>
-                      <div style={{whiteSpace:"pre-wrap"}}>{m.text}</div>
-
+                    {/* Removed alternating short class. Use uniform bubble styling */}
+                    <div className="message-bubble">
+                      <div dangerouslySetInnerHTML={{ __html: formatTextToHtml(m.text || "") }} />
                       {m.attachments && m.attachments.length > 0 && (
                         <div className="attach-preview">
                           {m.attachments.map((a, idx) => (
@@ -173,7 +209,6 @@ export default function Forum() {
             })}
           </div>
 
-          {/* composer pinned but wrap provides padding so it won't cover list */}
           <form ref={composerRef} className="composer" onSubmit={handleSend}>
             <label className="attach-label" title="Attach images">
               <img src="/plus.svg" alt="plus" className="plus-icon" />
@@ -184,7 +219,7 @@ export default function Forum() {
               className="composer-input"
               placeholder="Write a message..."
               value={text}
-              onChange={(e)=>setText(e.target.value)}
+              onChange={handleTextChange}
               aria-label="Message text"
             />
 
