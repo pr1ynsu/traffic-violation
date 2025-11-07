@@ -1,7 +1,7 @@
-/// backend/routes/violations.js
+// backend/routes/violations.js
 const express = require('express');
 const Violation = require('../models/Violation');
-const { authMiddleware } = require('../middleware/auth'); // ✅ Corrected import
+const { protect } = require('../middleware/auth'); // ✅ Correct import name
 
 const router = express.Router();
 
@@ -49,7 +49,7 @@ router.post('/', async (req, res) => {
    2️⃣ GET /api/violations/me 
    Used by authenticated user to fetch their own chalans
 ============================================================ */
-router.get('/me', authMiddleware, async (req, res) => {
+router.get('/me', protect, async (req, res) => { // ✅ Changed to protect
   try {
     const vehicleNumber = req.user.vehicle;
 

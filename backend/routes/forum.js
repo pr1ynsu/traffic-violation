@@ -2,13 +2,14 @@
 
 const express = require('express');
 const router = express.Router();
+
+// ✅ Correct import path (single slash)
 const forumController = require('../controllers/forum.controller');
 const { protect } = require('../middleware/auth');
 
-// Debug to confirm imports
-console.log("📂 Imported controllers (from forum.js):", forumController);
+console.log("🧩 protect middleware:", typeof protect);
 
-// Destructure after confirming import
+// ✅ Destructure after confirming import
 const { createPost, getAllPosts, getPostById, deletePost } = forumController;
 
 // ✅ Create a new forum post
