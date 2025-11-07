@@ -30,19 +30,19 @@ describe('RoleDropdown', () => {
     mockNavigate.mockClear()
   })
 
-  test('renders role label correctly for user', () => {
+  test('renders initials correctly for user', () => {
     renderWithAuth({ name: 'John Doe', role: 'user' })
-    expect(screen.getByText('Hi, John Doe · Role: User')).toBeInTheDocument()
+    expect(screen.getByText('JD')).toBeInTheDocument()
   })
 
-  test('renders role label correctly for government', () => {
+  test('renders initials correctly for government', () => {
     renderWithAuth({ name: 'Jane Smith', role: 'government' })
-    expect(screen.getByText('Hi, Jane Smith · Role: Government')).toBeInTheDocument()
+    expect(screen.getByText('JS')).toBeInTheDocument()
   })
 
   test('toggles dropdown on click', () => {
     renderWithAuth({ name: 'Test User', role: 'user' })
-    const dropdownButton = screen.getByText('Hi, Test User · Role: User')
+    const dropdownButton = screen.getByText('TU')
 
     expect(screen.queryByText('Go to Dashboard')).not.toBeInTheDocument()
 
@@ -56,29 +56,29 @@ describe('RoleDropdown', () => {
 
   test('navigates to user dashboard on "Go to Dashboard" click', () => {
     renderWithAuth({ name: 'Test User', role: 'user' })
-    const dropdownButton = screen.getByText('Hi, Test User · Role: User')
+    const dropdownButton = screen.getByText('TU')
     fireEvent.click(dropdownButton)
 
     const dashboardLink = screen.getByText('Go to Dashboard')
     fireEvent.click(dashboardLink)
 
-    expect(mockNavigate).toHaveBeenCalledWith('/user/dashboard')
+    expect(mockNavigate).toHaveBeenCalledWith('/user')
   })
 
   test('navigates to gov dashboard on "Go to Dashboard" click', () => {
     renderWithAuth({ name: 'Test Gov', role: 'government' })
-    const dropdownButton = screen.getByText('Hi, Test Gov · Role: Government')
+    const dropdownButton = screen.getByText('TG')
     fireEvent.click(dropdownButton)
 
     const dashboardLink = screen.getByText('Go to Dashboard')
     fireEvent.click(dashboardLink)
 
-    expect(mockNavigate).toHaveBeenCalledWith('/gov/dashboard')
+    expect(mockNavigate).toHaveBeenCalledWith('/gov')
   })
 
   test('calls logout and navigates to login on "Switch account" click', () => {
     renderWithAuth({ name: 'Test User', role: 'user' })
-    const dropdownButton = screen.getByText('Hi, Test User · Role: User')
+    const dropdownButton = screen.getByText('TU')
     fireEvent.click(dropdownButton)
 
     const switchAccountLink = screen.getByText('Switch account')
@@ -90,7 +90,7 @@ describe('RoleDropdown', () => {
 
   test('closes dropdown on outside click', () => {
     renderWithAuth({ name: 'Test User', role: 'user' })
-    const dropdownButton = screen.getByText('Hi, Test User · Role: User')
+    const dropdownButton = screen.getByText('TU')
     fireEvent.click(dropdownButton)
 
     expect(screen.getByText('Go to Dashboard')).toBeInTheDocument()
