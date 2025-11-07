@@ -30,7 +30,15 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const posts = await ForumMessage.find().sort({ createdAt: -1 });
-    res.status(200).json(posts);
+    // Transform to match frontend expectation: { _id, text, authorId, authorName, createdAt }
+    const transformed = posts.map(p => ({
+      _id: p._id,
+      text: p.content, // assuming content is the message text
+      authorId: p.authorId,
+      authorName: p.authorName,
+      createdAt: p.createdAt,
+    }));
+    res.status(200).json(transformed);
   } catch (err) {
     console.error('Error fetching posts:', err);
     res.status(500).json({ message: 'Server error fetching posts.' });

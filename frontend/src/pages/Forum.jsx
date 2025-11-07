@@ -1,8 +1,10 @@
-// Forum.jsx — fixed: no alternating `short` class, keeps newline normalization and safe rendering
+// Forum.jsx — integrated with backend Socket.IO
 import React, { useEffect, useRef, useState } from "react";
+import useAuth from "../auth/userAuth";
+import { initSocket, apiGetForumMessages } from "../api/apiClient";
 import "./Forum.css";
 
-const USE_MOCK = true;
+const USE_MOCK = false;
 function nowISO() { return new Date().toISOString(); }
 function uid(prefix='m'){ return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`; }
 
@@ -27,17 +29,51 @@ function formatTextToHtml(raw = "") {
 }
 
 export default function Forum() {
+  const { user, token } = useAuth();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState("");
   const [files, setFiles] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [socket, setSocket] = useState(null);
 
   const listRef = useRef(null);
   const fileRef = useRef(null);
   const composerRef = useRef(null);
   const wrapRef = useRef(null);
 
-  // seed messages on mount
+  // Initialize socket and load messages on mount
+  useEffect(() => {
+    if (token) {
+      const sock = initSocket(token);
+      setSocket(sock);
+
+      // Load existing messages
+      apiGetForumMessages().then(msgs => {
+        setMessages(msgs.map(m => ({
+          _id: m._id,
+          text: m.text,
+          user: { id: m.authorId, name: m.authorName },
+          createdAt: m.createdAt,
+        })));
+      }).catch(console.error);
+
+      // Listen for new messages
+      sock.on('message', (msg) => {
+        setMessages(prev => [...prev, {
+          _id: msg.id,
+          text: msg.text,
+          user: { id: msg.authorId, name: msg.authorName },
+          createdAt: msg.createdAt,
+        }]);
+      });
+
+      return () => {
+        sock.disconnect();
+      };
+    }
+  }, [token]);
+
+  // seed messages on mount (fallback for mock)
   useEffect(() => {
     if (USE_MOCK) {
       const saved = JSON.parse(localStorage.getItem("forum_messages_v1") || "null");
@@ -104,7 +140,7 @@ export default function Forum() {
       _id: uid("tmp"),
       text: cleanedText,
       attachments: files.map(f => ({ url: f.preview || URL.createObjectURL(f), filename: f.name, mime: f.type })),
-      user: { id: "me", name: "You" },
+      user: { id: user?.id || "me", name: user?.name || "You" },
       createdAt: nowISO(),
       optimistic: true
     };
@@ -125,7 +161,11 @@ export default function Forum() {
       }, 300);
       return;
     }
-    // real API omitted
+
+    // Send via Socket.IO
+    if (socket) {
+      socket.emit('message', { roomId: 'general', text: cleanedText, meta: {} });
+    }
   }
 
   function handleDelete(id){

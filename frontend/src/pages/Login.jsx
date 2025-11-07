@@ -8,8 +8,8 @@ import "./Login.css";
  - Route: /login/:role  (role => "user" or "government")
 */
 
-const USE_MOCK = true;
-const API_BASE = "http://localhost:5000";
+const USE_MOCK = false;
+const API_BASE = "http://localhost:8000";
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const uid = () => `u_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
@@ -142,16 +142,16 @@ export default function Login() {
         return;
       }
 
-      // real backend path (kept for later)
-      const endpoint = isRegister ? `${API_BASE}/api/register` : `${API_BASE}/api/login`;
+      // real backend paths
+      const endpoint = isRegister ? `${API_BASE}/api/auth/signup` : `${API_BASE}/api/auth/login`;
       const payload = isRegister
         ? {
             name: form.name, mobile: form.mobile, email: form.email,
             address: form.address, vehicle: form.vehicle, license: form.license,
             age: form.age, guardianName: form.guardianName, guardianNumber: form.guardianNumber,
-            userType: form.userType, password: form.password
+            role: form.userType.toLowerCase(), password: form.password
           }
-        : { emailOrMobile: form.email, password: form.password };
+        : { email: form.email, password: form.password };
 
       const res = await fetch(endpoint, {
         method: "POST",

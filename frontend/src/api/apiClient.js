@@ -1,38 +1,67 @@
 // src/api/apiClient.js
-// Facade that uses localDB mock & returns fetch-like shape: { data, meta }
-import { localDB } from "../data/localDB.js";
+// API client for backend integration
+import { io } from "socket.io-client";
 
-function delay(ms = 150) {
-  return new Promise((r) => setTimeout(r, ms));
+const API_BASE = "http://localhost:8000";
+
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 }
 
 export async function apiGetRecords({ type = "violations", owner, page = 1, q = "" } = {}) {
-  // simulate network latency
-  await delay(120);
+  const params = new URLSearchParams({ type, page, q });
+  if (owner) params.append("owner", owner);
 
-  // localDB returns enriched records already
-  const data = localDB.getRecords({ type, owner });
+  const res = await fetch(`${API_BASE}/api/violations?${params}`, {
+    headers: getAuthHeaders(),
+  });
 
-  // simple client-side filter (q) for demo
-  const filtered = q
-    ? data.filter(
-        (r) =>
-          (r.vehicle && r.vehicle.toLowerCase().includes(q.toLowerCase())) ||
-          (r.violation && r.violation.toLowerCase().includes(q.toLowerCase())) ||
-          (r.ownerName && r.ownerName.toLowerCase().includes(q.toLowerCase()))
-      )
-    : data;
-
-  // simple page (pageSize = 10)
-  const pageSize = 10;
-  const start = (page - 1) * pageSize;
-  const paged = filtered.slice(start, start + pageSize);
-
-  return { data: paged, meta: { total: filtered.length, page, pageSize } };
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
 }
 
 export async function apiGetUserByRole(role) {
-  await delay(60);
-  const u = localDB.getUserByRole(role);
-  return u;
+  const res = await fetch(`${API_BASE}/api/auth/user?role=${role}`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+// Socket.IO integration for forum
+let socket = null;
+
+export function initSocket(token) {
+  if (socket) socket.disconnect();
+  socket = io(`${API_BASE}/forum`, {
+    auth: { token },
+  });
+  return socket;
+}
+
+export function getSocket() {
+  return socket;
+}
+
+export async function apiGetForumMessages() {
+  const res = await fetch(`${API_BASE}/api/forum`, {
+    headers: getAuthHeaders(),
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+export async function apiSendForumMessage({ roomId, text, meta }) {
+  const res = await fetch(`${API_BASE}/api/forum`, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ roomId, text, meta }),
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
 }
