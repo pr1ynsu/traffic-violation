@@ -169,7 +169,8 @@ export default function Login() {
       if (data.token) localStorage.setItem("token", data.token);
       if (data.user) localStorage.setItem("current_user", JSON.stringify(data.user));
       setMessage({ type: "success", text: isRegister ? "Registered. Redirecting..." : "Logged in. Redirecting..." });
-      setTimeout(() => navigate("/forum"), 500);
+      const redirectPath = role === "government" ? "/gov" : "/user";
+      setTimeout(() => navigate(redirectPath), 500);
     } catch (err) {
       console.error(err);
       setMessage({ type: "error", text: "Network error" });
