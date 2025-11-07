@@ -23,5 +23,15 @@ const protect = (req, res, next) => {
   }
 };
 
+// Role-based middleware
+const requireRole = (requiredRole) => {
+  return (req, res, next) => {
+    if (!req.user || req.user.role !== requiredRole) {
+      return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
+    }
+    next();
+  };
+};
+
 // ✅ Correct export
-module.exports = { protect };
+module.exports = { protect, requireRole };

@@ -23,6 +23,7 @@ import PoshPolicy from "./pages/PoshPolicy";
 // new pages/layouts (mock-backed)
 import UserLayout from "./pages/User/UserLayout";
 import GovLayout from "./pages/Gov/GovLayout";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function AppWrapper() {
   const location = useLocation();
@@ -53,8 +54,8 @@ function AppWrapper() {
         <Route path="/posh-policy" element={<PoshPolicy />} />
 
         {/* NEW: user & gov nested routes */}
-        <Route path="/user/*" element={<UserLayout />} />
-        <Route path="/gov/*" element={<GovLayout />} />
+        <Route path="/user/*" element={<ProtectedRoute role="user"><UserLayout /></ProtectedRoute>} />
+        <Route path="/gov/*" element={<ProtectedRoute role="government"><GovLayout /></ProtectedRoute>} />
       </Routes>
 
       {showFooter && <Footer />}

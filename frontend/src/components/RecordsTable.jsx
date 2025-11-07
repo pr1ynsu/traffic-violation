@@ -32,6 +32,19 @@ export default function RecordsTable({ columns, fetcher, type = "violations", ro
 
   useEffect(() => { load(); }, [type, role, page]);
 
+  // Trigger search when q changes
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (page === 1) {
+        load();
+      } else {
+        setPage(1);
+      }
+    }, 300); // Debounce search
+
+    return () => clearTimeout(timeoutId);
+  }, [q]);
+
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
@@ -45,7 +58,7 @@ export default function RecordsTable({ columns, fetcher, type = "violations", ro
           <button onClick={load} style={{ marginRight: 8 }}>Refresh</button>
           <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>Prev</button>
           <span style={{ margin: "0 8px" }}>Page {page}</span>
-          <button onClick={() => setPage((p) => p + 1)}>Next</button>
+          <button onClick={() => setPage((p) => p + 1)} disabled={!meta || page >= meta.totalPages}>Next</button>
         </div>
       </div>
 
@@ -82,7 +95,7 @@ export default function RecordsTable({ columns, fetcher, type = "violations", ro
 
       {meta && (
         <div style={{ marginTop: 10, color: "#ddd", fontSize: 13 }}>
-          Total: {meta.total} • Page size: {meta.pageSize}
+          Total: {meta.total} • Page size: {meta.pageSize} • Page {meta.page} of {meta.totalPages}
         </div>
       )}
     </div>

@@ -37,7 +37,7 @@ router.post('/signup', async (req, res) => {
     });
 
     const token = jwt.sign(
-      { id: user._id, vehicle: user.vehicle, role: user.role },
+      { id: user._id, name: user.name, vehicle: user.vehicle, role: user.role },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );
@@ -75,7 +75,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password.' });
 
     const token = jwt.sign(
-      { id: user._id, vehicle: user.vehicle, role: user.role },
+      { id: user._id, name: user.name, vehicle: user.vehicle, role: user.role },
       JWT_SECRET,
       { expiresIn: JWT_EXPIRES_IN }
     );

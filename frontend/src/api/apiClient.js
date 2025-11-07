@@ -2,7 +2,7 @@
 // API client for backend integration
 import { io } from "socket.io-client";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = "http://localhost:8001";
 
 function getAuthHeaders() {
   const token = localStorage.getItem("token");

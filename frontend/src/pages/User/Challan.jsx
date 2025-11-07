@@ -5,10 +5,12 @@ import mockFetcher from "../../utils/mockFetcher";
 
 export default function Challan() {
   const columns = [
-    { key: "vehicle", label: "Vehicle No." },
-    { key: "challan", label: "Challan" },
-    { key: "violation", label: "Violation" },
-    { key: "timestamp", label: "Timestamp" },
+    { key: "id", label: "ID" },
+    { key: "vehicle_number", label: "Vehicle No." },
+    { key: "challan_rupees", label: "Challan (₹)" },
+    { key: "violation_text", label: "Violation" },
+    { key: "timestamp", label: "Timestamp", render: (row) => new Date(row.timestamp).toLocaleString() },
+    { key: "verified", label: "Status", render: (row) => row.verified ? "Verified" : "Pending" }
   ];
   return <RecordsTable columns={columns} fetcher={mockFetcher} type="all" role="user" />;
 }

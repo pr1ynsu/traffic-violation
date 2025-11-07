@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import useAuth from "../auth/userAuth";
 import "./Login.css";
 
 /*
@@ -17,6 +18,15 @@ const uid = () => `u_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
 export default function Login() {
   const { role } = useParams();
   const navigate = useNavigate();
+  const { user, token } = useAuth();
+
+  useEffect(() => {
+    if (token && user) {
+      // Already authenticated, redirect to dashboard
+      const dashboardPath = user.role === 'government' ? '/gov' : '/user';
+      navigate(dashboardPath, { replace: true });
+    }
+  }, [token, user, navigate]);
 
   const [isRegister, setIsRegister] = useState(false);
   const [loading, setLoading] = useState(false);

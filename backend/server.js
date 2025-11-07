@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken');
+const fs = require('fs').promises;
+const path = require('path');
 
 const { connectDB } = require('./config/db');
 const ForumMessage = require('./models/ForumMessage');
@@ -15,6 +17,7 @@ const User = require('./models/User');
 const authRoutes = require('./routes/auth');
 const violationsRoutes = require('./routes/violations');
 const forumRoutes = require('./routes/forum');
+const dashboardRoutes = require('./routes/dashboard');
 // ⚠️ If you don’t have an upload.js file yet, comment the line below
 // const uploadRoutes = require('./routes/upload');
 
@@ -26,10 +29,23 @@ const rateLimiter = require('express-rate-limit')({
   legacyHeaders: false,
 });
 
+
+
 const PORT = process.env.PORT || 8000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/traffic_violation_db';
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
 const JWT_SECRET = process.env.JWT_SECRET || 'please_change_this';
+const STORAGE_DIR = process.env.STORAGE_DIR || './storage';
+
+// Ensure storage directory exists
+(async () => {
+  try {
+    await fs.mkdir(path.join(STORAGE_DIR, 'violations'), { recursive: true });
+    console.log(`✅ Storage directory ready: ${STORAGE_DIR}`);
+  } catch (error) {
+    console.error('❌ Failed to create storage directory:', error);
+  }
+})();
 
 const app = express();
 const server = http.createServer(app);
@@ -42,14 +58,20 @@ app.use(express.urlencoded({ extended: true }));
 app.use(rateLimiter);
 app.use(cors({ origin: CORS_ORIGIN }));
 
-// 🧩 Connect to MongoDB
-connectDB(MONGO_URI);
+// 🧩 Connect to MongoDB conditionally
+if (process.env.USE_MONGO === 'true') {
+    connectDB(MONGO_URI);
+    console.log('✅ MongoDB mode enabled');
+} else {
+    console.log('✅ JSON store mode enabled');
+}
 
 // 🛣️ Routes
 app.use('/api/auth', authRoutes);
 // app.use('/api/upload', uploadRoutes); // Uncomment when upload.js is added
 app.use('/api/violations', violationsRoutes);
 app.use('/api/forum', forumRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 

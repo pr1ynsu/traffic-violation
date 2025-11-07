@@ -1,0 +1,28 @@
+[
+  {
+    "id": "test123",
+    "timestamp": "2025-01-07T12:00:00Z",
+    "vehicle_number": "ABC123",
+    "violation_code": 101,
+    "violation_text": "Speeding above limit",
+    "offender_name": "A",
+    "challan_rupees": 1000,
+    "credits_rupees": 100,
+    "photo_path": "C:\\Users\\txtdm\\traffic-violation\\backend\\tests\\test-storage\\test-photo.jpg",
+    "createdAt": "2025-11-07T14:48:04.048Z",
+    "updatedAt": "2025-11-07T14:48:04.049Z"
+  },
+  {
+    "id": "test456",
+    "timestamp": "2025-01-07T12:00:00Z",
+    "vehicle_number": "XYZ789",
+    "violation_code": 102,
+    "violation_text": "Running red light",
+    "offender_name": "B",
+    "challan_rupees": 2000,
+    "credits_rupees": 200,
+    "photo_path": "C:\\Users\\txtdm\\traffic-violation\\backend\\tests\\test-storage\\violations\\temp_1762526885017_2025-11-07T14-48-05-017Z.jpg",
+    "createdAt": "2025-11-07T14:48:05.022Z",
+    "updatedAt": "2025-11-07T14:48:05.022Z"
+  }
+]

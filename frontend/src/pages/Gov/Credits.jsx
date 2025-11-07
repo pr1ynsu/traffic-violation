@@ -5,10 +5,13 @@ import mockFetcher from "../../utils/mockFetcher";
 
 export default function Credits() {
   const columns = [
-    { key: "vehicle", label: "Vehicle No." },
-    { key: "credits", label: "Credits" },
-    { key: "timestamp", label: "Timestamp" },
-    { key: "ownerName", label: "Owner" },
+    { key: "id", label: "ID" },
+    { key: "vehicle_number", label: "Vehicle No." },
+    { key: "credits_rupees", label: "Credits (₹)" },
+    { key: "violation_text", label: "Violation" },
+    { key: "offender_name", label: "Owner" },
+    { key: "timestamp", label: "Timestamp", render: (row) => new Date(row.timestamp).toLocaleString() },
+    { key: "verified", label: "Status", render: (row) => row.verified ? "Verified" : "Pending" }
   ];
   return <RecordsTable columns={columns} fetcher={mockFetcher} type="credits" role="gov" />;
 }

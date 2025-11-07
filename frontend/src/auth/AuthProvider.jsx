@@ -36,6 +36,8 @@ export function AuthProvider({ children }) {
     setUser(null);
     localStorage.removeItem("token");
     localStorage.removeItem("current_user");
+    // Clear any cached data or session cookies if used
+    // Note: axios/fetch default headers are not set here, but can be handled in apiClient
   }
 
   return (
