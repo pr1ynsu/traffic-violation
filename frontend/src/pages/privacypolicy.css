@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-deep: #0f234f;
+  --panel: rgba(255,255,255,0.04);
+  --glass: rgba(255,255,255,0.08);
+  --cream: #fffdf0;
+  --muted: rgba(255,255,255,0.6);
+  --accent: #e8cf4a;
+}
+
+.pp-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(180deg,#07143a 0%, var(--bg-deep) 60%);
+  color: #fff;
+  font-family: 'Poppins', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* hero */
+.pp-hero {
+  max-width: 900px;
+  text-align: center;
+  margin-bottom: 36px;
+  padding: 28px 20px;
+  background: var(--panel);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 12px 40px rgba(2,6,20,0.45);
+}
+
+.pp-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.pp-subtitle {
+  font-size: 1.05rem;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* content wrapper */
+.pp-content {
+  width: 100%;
+  max-width: 860px;
+  padding: 24px;
+  background: linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(2,6,25,0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* sections */
+.pp-section {
+  margin-bottom: 28px;
+}
+
+.pp-section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+.pp-small-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.pp-text {
+  color: #fff;
+  line-height: 1.5;
+}
+
+.pp-muted {
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.pp-list {
+  padding-left: 20px;
+  color: #fff;
+  line-height: 1.5;
+}
+
+.pp-divider {
+  border: none;
+  height: 1px;
+  margin: 24px 0;
+  background: rgba(255,255,255,0.08);
+}
+
+/* meta section */
+.pp-effective {
+  margin-top: 6px;
+  color: var(--accent);
+}
+
+.pp-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.pp-link:hover {
+  text-decoration: underline;
+}
+
+/* footer */
+.pp-footer {
+  margin-top: 40px;
+}
+
+.pp-footnote {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* responsiveness */
+@media (max-width: 760px) {
+  .pp-content {
+    padding: 16px;
+  }
+
+  .pp-title {
+    font-size: 1.8rem;
+  }
+
+  .pp-section-title {
+    font-size: 1.25rem;
+  }
+}

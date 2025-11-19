@@ -1,114 +1,37 @@
-require('dotenv').config();
 const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const helmet = require('helmet');
 const cors = require('cors');
-const morgan = require('morgan');
-const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
 
-const { connectDB } = require('./config/db');
-const ForumMessage = require('./models/ForumMessage');
-const User = require('./models/User');
+// Load environment variables
+dotenv.config();
+
+// Create Express app
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// Connect to MongoDB (if needed)
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/traffic-violation', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log(err));
 
 // Routes
 const authRoutes = require('./routes/auth');
-const violationsRoutes = require('./routes/violations');
-const forumRoutes = require('./routes/forum');
-// ⚠️ If you don’t have an upload.js file yet, comment the line below
-// const uploadRoutes = require('./routes/upload');
-
-// Rate limiter
-const rateLimiter = require('express-rate-limit')({
-  windowMs: 15 * 60 * 1000,
-  max: 200,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-const PORT = process.env.PORT || 8000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/traffic_violation_db';
-const CORS_ORIGIN = process.env.CORS_ORIGIN || '*';
-const JWT_SECRET = process.env.JWT_SECRET || 'please_change_this';
-
-const app = express();
-const server = http.createServer(app);
-
-// 🧱 Middleware setup
-app.use(helmet());
-app.use(morgan('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(rateLimiter);
-app.use(cors({ origin: CORS_ORIGIN }));
-
-// 🧩 Connect to MongoDB
-connectDB(MONGO_URI);
-
-// 🛣️ Routes
 app.use('/api/auth', authRoutes);
-// app.use('/api/upload', uploadRoutes); // Uncomment when upload.js is added
-app.use('/api/violations', violationsRoutes);
-app.use('/api/forum', forumRoutes);
 
-app.get('/health', (req, res) => res.json({ ok: true }));
-
-// 🧠 Socket.IO setup
-const io = new Server(server, {
-  cors: { origin: CORS_ORIGIN, methods: ['GET', 'POST'] },
+// Basic route
+app.get('/', (req, res) => {
+  res.send('Backend is running');
 });
 
-io.of('/forum').use(async (socket, next) => {
-  const token = socket.handshake.auth?.token;
-  if (!token) return next(new Error('Authentication required'));
-
-  try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    const user = await User.findById(payload.id).lean();
-    if (!user) return next(new Error('User not found'));
-    socket.data.user = user;
-    next();
-  } catch (err) {
-    next(new Error('Invalid token'));
-  }
-});
-
-io.of('/forum').on('connection', (socket) => {
-  const user = socket.data.user;
-  console.log(`✅ Socket connected: ${user.email}`);
-
-  socket.on('join', (roomId) => {
-    socket.join(roomId);
-  });
-
-  socket.on('message', async (payload) => {
-    const { roomId, text, meta } = payload;
-    if (!roomId || !text) return;
-
-    const msg = await ForumMessage.create({
-      roomId,
-      authorId: user._id,
-      authorName: user.name,
-      text,
-      meta: meta || {},
-    });
-
-    io.of('/forum').to(roomId).emit('message', {
-      id: msg._id,
-      roomId: msg.roomId,
-      authorId: msg.authorId,
-      authorName: msg.authorName,
-      text: msg.text,
-      createdAt: msg.createdAt,
-    });
-  });
-
-  socket.on('disconnect', () => {
-    console.log(`❌ Socket disconnected: ${user.email}`);
-  });
-});
-
-// 🚀 Start server
-server.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });

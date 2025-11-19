@@ -4,7 +4,7 @@ import "./Partner.css";
 const partnersData = [
   {
     id: 1,
-    name: "Partner One",
+    name: "Toyota",
     logo: "partner1.png",
     devices: 124,
     verifiedViolations: 42,
@@ -13,7 +13,7 @@ const partnersData = [
   },
   {
     id: 2,
-    name: "Partner Two",
+    name: "Kia",
     logo: "partner2.png",
     devices: 62,
     verifiedViolations: 20,
@@ -22,7 +22,7 @@ const partnersData = [
   },
   {
     id: 3,
-    name: "Partner Three",
+    name: "Audi",
     logo: "partner3.png",
     devices: 220,
     verifiedViolations: 95,
@@ -39,7 +39,7 @@ export default function Partner() {
     if (!active) return;
 
     const target = partnersData.find((p) => p.id === active);
-    const duration = 700; // animation duration in ms
+    const duration = 700; // ms
     const frameRate = 30;
     const frames = Math.round((duration / 1000) * frameRate);
 
@@ -79,30 +79,36 @@ export default function Partner() {
         </p>
 
         {/* Partner Logos */}
-        <div className="partner-logos">
+        <div className="partner-logos" role="list">
           {partnersData.map((p) => (
             <button
               key={p.id}
+              role="listitem"
+              aria-pressed={active === p.id}
               className={`partner-card ${active === p.id ? "is-active" : ""}`}
               onClick={() => setActive(active === p.id ? null : p.id)}
+              title={p.name}
             >
               <img
                 src={`/partner/${p.logo}`}
                 alt={`${p.name} logo`}
                 className="partner-logo-img"
+                width="160"
+                height="60"
+                loading="lazy"
               />
             </button>
           ))}
         </div>
 
         {/* Detail Panel */}
-        <div className={`partner-detail ${active ? "open" : ""}`}>
+        <div className={`partner-detail ${active ? "open" : ""}`} aria-hidden={!active}>
           {active && (
             <div className="partner-detail-inner">
               <div className="partner-detail-head">
                 <img
                   src={`/partner/${partnersData.find((p) => p.id === active).logo}`}
-                  alt="logo"
+                  alt=""
                   className="partner-detail-logo"
                 />
                 <h3 className="partner-detail-title">
@@ -110,12 +116,9 @@ export default function Partner() {
                 </h3>
               </div>
 
-              <div className="partner-stats">
+              <div className="partner-stats" role="list">
                 <Stat label="Active Devices" value={counters.devices ?? 0} />
-                <Stat
-                  label="Verified Violations"
-                  value={counters.verifiedViolations ?? 0}
-                />
+                <Stat label="Verified Violations" value={counters.verifiedViolations ?? 0} />
                 <Stat label="Reward Points" value={counters.rewardPoints ?? 0} />
                 <Stat label="Vehicles" value={counters.vehicles ?? 0} />
               </div>
@@ -128,16 +131,11 @@ export default function Partner() {
                 <div className="partner-actions">
                   <button
                     className="btn btn-primary"
-                    onClick={() =>
-                      alert("Open company dashboard (placeholder)")
-                    }
+                    onClick={() => alert("Open company dashboard (placeholder)")}
                   >
                     View Dashboard
                   </button>
-                  <button
-                    className="btn btn-outline"
-                    onClick={() => setActive(null)}
-                  >
+                  <button className="btn btn-outline" onClick={() => setActive(null)}>
                     Close
                   </button>
                 </div>
@@ -152,7 +150,7 @@ export default function Partner() {
 
 function Stat({ label, value }) {
   return (
-    <div className="stat">
+    <div className="stat" role="listitem" aria-label={`${label}: ${value.toLocaleString()}`}>
       <div className="stat-value">{value.toLocaleString()}</div>
       <div className="stat-label">{label}</div>
     </div>

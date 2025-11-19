@@ -1,233 +1,304 @@
-/* Forum.css — full-page, avatar alignment fixed (others left, me right) */
+/* Forum.css — full-bleed + composer in-flow + white-blur action cluster */
+/* Import font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root{
-  --bg-top: #06132a;
-  --bg-deep: #0e2346;
-  --panel-glass: rgba(255,255,255,0.03);
-  --cream: #fffdf0;
-  --muted-white: rgba(255,255,255,0.7);
+  --bg-deep: #0f234f;
   --accent: #e8cf4a;
-  --max-width: 1100px;
-  --radius: 14px;
-  --shadow-strong: 0 20px 60px rgba(2,6,25,0.5);
-  --shadow-soft: 0 8px 30px rgba(2,6,18,0.14);
-  --glass-border: rgba(255,255,255,0.03);
-  --composer-height: 88px; /* fallback overridden by ResizeObserver */
+  --cream: #fffdf0;
+  --muted-white: rgba(255,255,255,0.42);
+  --header-h: 84px;
+  --safe-pad: 14px;
+
+  /* sizing tokens */
+  --bubble-max: 92%;
+  --bubble-short-max: 70%;
+  --media-img-w: 260px;
+  --media-img-h: 160px;
+  --media-audio-w: 420px;
+  --att-preview-img-w: 180px;
+  --att-preview-img-h: 120px;
+  --btn-size: 56px;
+  --composer-pad: 16px;
 }
 
-/* page full viewport */
-.forum-page.fullpage {
-  min-height: 100vh;
-  display:flex;
-  flex-direction: column;
-  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-deep) 70%);
-  color: #fff;
-  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
-  -webkit-font-smoothing: antialiased;
-}
+/* box-sizing */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* header */
-.forum-header {
-  height: 72px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(90deg, rgba(36,86,160,0.96), rgba(22,64,140,0.95));
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: var(--accent);
-  box-shadow: var(--shadow-strong);
-}
-
-/* main area fills remaining height */
-.forum-content {
-  flex: 1;
-  display:flex;
-  justify-content:center;
-  align-items:stretch;
-  padding: 18px;
-}
-
-/* wrap: full height, centered max width */
-.forum-list-wrap {
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
-  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-strong);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+/* page full-bleed */
+html, body, #root { height: 100%; margin: 0; }
+.forum-page{
+  min-height:100vh;
   display:flex;
   flex-direction:column;
-  gap: 12px;
-  height: calc(100vh - 110px); /* header + page padding accounted */
-  padding: 14px;
+  background: linear-gradient(180deg,#07143a 0%, var(--bg-deep) 60%);
+  color: #fff;
+  font-family: 'Poppins', system-ui, sans-serif;
+  padding: 0;
+  margin: 0;
 }
 
-/* message list - use bottom padding equal to composer height */
-.forum-list {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  padding: 12px;
-  padding-bottom: calc(var(--composer-height) + 28px); /* critical to avoid overlap */
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 10px;
-  background: transparent;
-}
-
-/* subtle scrollbar */
-.forum-list::-webkit-scrollbar { width: 10px; }
-.forum-list::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
-  border-radius: 999px;
-}
-
-/* message rows align left (other) or right (me) */
-.message-row {
-  display:flex;
-  gap: 12px;
-  margin: 10px 6px;
-  align-items: flex-start;
-}
-
-/* when .me, align to right and reverse order for avatar/message */
-.message-row.me {
-  justify-content: flex-end;
-}
-
-/* avatar (will sit left for others, right for me) */
-.avatar {
-  width:48px;
-  height:48px;
-  border-radius:50%;
-  background: var(--cream);
-  color: #081225;
-  font-weight:700;
+/* header fixed */
+.forum-header{
+  height: var(--header-h);
   display:flex;
   align-items:center;
   justify-content:center;
-  flex-shrink:0;
-  box-shadow: var(--shadow-soft);
-  cursor: pointer;
+  background: linear-gradient(90deg, rgba(50,90,170,0.96), rgba(40,75,160,0.94));
+  font-size:1.6rem;
+  font-weight:600;
+  color: var(--accent);
+  box-shadow: 0 6px 30px rgba(8,12,30,0.35);
+  z-index: 10;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
-/* Ordering: for .me, avatar should appear after bubble -> achieved by CSS order */
-.message-row.me .avatar { order: 2; margin-left: 10px; }
-.message-row:not(.me) .avatar { order: 0; margin-right: 10px; }
+/* content area */
+.forum-content{
+  flex:1;
+  display:flex;
+  justify-content:stretch;
+  padding-top: var(--header-h);
+  box-sizing: border-box;
+}
 
-/* container for name/time and bubble */
-.message-col { display:flex; flex-direction:column; gap:6px; max-width: 78%; }
-
-/* meta row */
-.msg-meta { display:flex; gap:10px; align-items:center; font-size:12px; color:var(--muted-white); }
-.meta-name { font-weight:700; }
-.meta-time { opacity:0.85; font-size:12px; }
-.meta-edited { opacity:0.7; }
-
-/* bubble base */
-.message-bubble {
-  background: linear-gradient(180deg, rgba(255,255,240,0.995), rgba(255,255,246,0.98));
-  color: #081225;
-  padding: 12px 16px;
-  border-radius: 18px;
-  box-shadow: var(--shadow-soft);
-  word-break: break-word;
-  transition: transform .18s ease, box-shadow .18s;
+/* list wrap full width */
+.forum-list-wrap{
+  width:100%;
+  height: calc(100vh - var(--header-h));
+  background: transparent;
+  border-radius: 0;
+  display:flex;
+  flex-direction:column;
+  overflow: hidden;
   position: relative;
 }
 
-/* left-tail for inbound */
-.message-bubble::after {
-  content: "";
-  position: absolute;
-  left: -8px;
-  bottom: 8px;
-  width: 12px; height: 12px;
-  background: linear-gradient(180deg, rgba(255,255,240,0.995), rgba(255,255,246,0.98));
-  transform: rotate(45deg);
-  border-radius: 2px;
-  box-shadow: var(--shadow-soft);
+/* message list: reserve bottom padding so composer doesn't cover last messages */
+.forum-list{
+  flex:1 1 auto;
+  overflow-y:auto;
+  padding: calc(var(--safe-pad) * 1.2);
+  padding-bottom: calc(var(--composer-pad) + var(--btn-size) + 28px);
+  position:relative;
+  scroll-behavior: smooth;
 }
 
-/* short variant */
-.message-bubble.short { max-width: 48%; }
-
-/* my messages — style & ordering */
-.message-row.me .message-col { align-items: flex-end; text-align: right; }
-.message-row.me .message-bubble {
-  background: linear-gradient(90deg, rgba(41,113,255,0.98), rgba(24,88,240,0.98));
-  color: #fff;
-  border-radius: 18px 18px 6px 18px;
-  box-shadow: 0 10px 36px rgba(6,20,70,0.28);
-}
-.message-row.me .message-bubble::after {
-  left: auto;
-  right: -8px;
-  bottom: 8px;
-  background: linear-gradient(90deg, rgba(41,113,255,0.98), rgba(24,88,240,0.98));
-  transform: rotate(45deg);
-  box-shadow: 0 10px 36px rgba(6,20,70,0.18);
+/* message row */
+.message-row{
+  display:flex;
+  align-items:flex-start;
+  gap:14px;
+  margin:12px 6px;
 }
 
-/* attachments */
-.attach-preview { display:flex; gap:8px; margin-top:10px; flex-wrap:wrap; }
-.attach-preview img { width:160px; height:110px; object-fit:cover; border-radius:10px; box-shadow: 0 10px 26px rgba(6,18,40,0.22); }
+/* system message */
+.system-row { justify-content: center; }
+.system-message {
+  background: rgba(255,255,255,0.03);
+  color: rgba(255,255,255,0.85);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  max-width: 92%;
+  text-align: center;
+  box-shadow: none;
+}
 
-/* composer pinned inside wrap (sticky). wrap provides padding-bottom so list never gets covered */
+/* avatar */
+.avatar{
+  width:48px; height:48px; border-radius:50%;
+  background: var(--cream); color:#081225; display:flex; align-items:center; justify-content:center; font-weight:700;
+  flex-shrink:0; box-shadow: 0 6px 20px rgba(3,6,18,0.45); cursor: pointer;
+}
+
+/* message bubble */
+.message-bubble{
+  background: linear-gradient(180deg, rgba(255,255,240,0.98), rgba(255,255,246,0.96));
+  color: #081225;
+  padding: 12px 18px;
+  border-radius: 20px;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 8px 28px rgba(2,6,18,0.12);
+  transition: transform .18s, box-shadow .18s;
+  max-width: var(--bubble-max);
+  display:inline-block;
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  hyphens: auto;
+}
+.message-bubble.short { max-width: var(--bubble-short-max); }
+.message-row.me .message-bubble { background: linear-gradient(90deg, rgba(38,126,255,0.95), rgba(28,96,235,0.95)); color: white; border-radius: 22px 22px 6px 22px; }
+
+/* msg meta & actions */
+.msg-meta { display:flex; gap:10px; align-items:center; font-size:12px; color:var(--muted-white); margin-bottom:6px; }
+.msg-actions { margin-top:8px; display:flex; gap:8px; }
+
+/* attachments inside message */
+.attach-preview { display:flex; gap:12px; margin-top:10px; flex-wrap:wrap; align-items:center; }
+.attach-preview img { width: var(--media-img-w); height: var(--media-img-h); object-fit: cover; border-radius:8px; box-shadow: 0 10px 30px rgba(0,0,0,0.22); max-width: calc(100% - 20px); }
+.attach-audio { width: var(--media-audio-w); max-width: 100%; }
+.attach-file { padding:8px 10px; background: rgba(0,0,0,0.06); color:#081225; border-radius:8px; font-weight:600; text-decoration:none; }
+
+/* ---------- Composer in-flow (not fixed) ---------- */
 .composer {
   display:flex;
   align-items:center;
   gap:12px;
-  padding: 12px;
-  border-radius: 12px;
+  padding: var(--composer-pad);
+  border-radius: 0;
   background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.03);
-  position: sticky;
-  bottom: 18px;
-  z-index: 8;
-  margin-top: 6px;
-  box-shadow: 0 10px 30px rgba(2,6,25,0.28);
-  align-self: stretch;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  flex: 0 0 auto;
+  width: 100%;
+  box-shadow: 0 -6px 20px rgba(2,6,25,0.06);
 }
 
-/* composer input */
+/* wrapper inside composer to hold actions and textarea */
+.chat-input-container {
+  width: 100%;
+  display:flex;
+  align-items:center;
+  gap: 12px;
+  position: relative;
+}
+
+/* white-blur action cluster (left side) */
+.chat-input__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* individual icon buttons inside the cluster */
+.chat-input__actions .icon-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.45);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition: transform .16s ease, background .16s ease;
+}
+.chat-input__actions .icon-btn:hover { transform: translateY(-3px); background: rgba(255,255,255,0.85); }
+
+/* composer textarea */
 .composer-input {
   flex:1;
+  min-height:48px;
+  max-height:220px;
+  resize:none;
+  padding:12px 16px;
+  border-radius:999px;
+  border:none;
+  outline:none;
   background: rgba(255,255,255,0.98);
-  color: #081225;
-  padding: 12px 16px;
-  border-radius: 999px;
-  border: none;
-  outline: none;
-  font-size: 1rem;
+  color:#081225;
+  font-size:1rem;
+  line-height:1.5;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.03);
+  overflow-y:auto;
+  min-width:0;
 }
 
-/* small utility buttons */
-.icon-btn { width:46px; height:46px; display:flex; align-items:center; justify-content:center; border-radius:10px; background: transparent; border:none; cursor:pointer; }
-.send-icon { width:26px; height:26px; }
-.plus-icon { width:20px; height:20px; filter: invert(1) brightness(2); }
+/* right-side send cluster (small white blur too) */
+.composer-right {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding-left: 8px;
+}
 
-/* action text buttons */
-.text-btn { background: transparent; border:none; color:var(--muted-white); cursor:pointer; padding:6px 8px; border-radius:6px; }
-.text-btn:hover { background: rgba(255,255,255,0.03); }
+/* prominent send button */
+.send-btn {
+  width: calc(56px + 6px);
+  height: calc(56px + 6px);
+  border-radius: 50%;
+  background: linear-gradient(90deg, #2b8bff, #1e6be6);
+  color: white;
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700;
+  box-shadow: 0 12px 30px rgba(43,139,255,0.18);
+  border:none;
+  cursor:pointer;
+}
 
-/* empty state */
-.empty-msg { text-align:center; opacity:0.6; margin: 40px 0; color:var(--muted-white); }
+/* recorder active state */
+.icon-btn.recording {
+  background: linear-gradient(90deg, #ff6b6b, #ff3b3b);
+  color: white;
+  box-shadow: 0 12px 30px rgba(255,107,107,0.14);
+}
 
-/* responsive */
-@media (max-width:900px) {
-  .forum-list-wrap { padding: 12px; height: calc(100vh - 90px); }
-  .attach-preview img { width:120px; height:86px; }
-  .message-bubble { padding:10px 14px; }
-  .message-bubble.short { max-width: 68%; }
-  .composer { padding:10px; bottom: 12px; }
+/* attachments bar anchored inside wrap (above composer area) */
+.attachments-bar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--composer-pad) + 10px);
+  display:flex;
+  gap:10px;
+  background: rgba(255,255,255,0.03);
+  padding:10px;
+  border-radius:12px;
+  box-shadow: 0 14px 44px rgba(2,6,25,0.25);
+  z-index: 30;
+}
+.att-preview {
+  position: relative;
+  padding:8px;
+  background: rgba(255,255,255,0.02);
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.att-preview img { width: var(--att-preview-img-w); height: var(--att-preview-img-h); object-fit:cover; border-radius:8px; }
+.att-preview audio { width: calc(var(--att-preview-img-w) + 100px); max-width: 520px; }
+.remove-att { position: absolute; top:-8px; right:-8px; background:#ff6b6b; border-radius:50%; color:white; border:none; width:26px; height:26px; cursor:pointer; }
+
+/* small row action button */
+.action-btn { background:transparent; border:none; color:var(--muted-white); cursor:pointer; padding:6px 8px; font-size:0.95rem; }
+
+/* profile modal */
+.profile-modal { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(2,6,25,0.5); z-index:60; }
+.profile-card { background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,246,0.98)); color:#081225; padding:18px; border-radius:12px; width:340px; box-shadow: 0 18px 60px rgba(2,6,25,0.25); }
+.btn-primary { padding:8px 12px; background: var(--accent); border:none; border-radius:8px; cursor:pointer; color:#081225; }
+
+/* responsive tweaks */
+@media (max-width: 1200px) {
+  :root { --media-img-w: 220px; --media-img-h: 140px; --media-audio-w: 360px; --att-preview-img-w: 140px; --att-preview-img-h: 96px; --btn-size: 52px; }
+  .message-bubble { max-width: 94%; }
+}
+@media (max-width: 880px) {
+  :root { --btn-size: 48px; }
+  .composer-input { padding:10px 12px; min-height:44px; }
+  .attachments-bar { left: 12px; transform: none; bottom: calc(var(--composer-pad) + 10px); }
+  .chat-input__actions { padding: 0.3rem 0.5rem; }
+  .chat-input__actions .icon-btn { width: 48px; height: 48px; }
+}
+@media (max-width: 480px) {
+  :root { --btn-size: 44px; --att-preview-img-w: 120px; --att-preview-img-h: 80px; --media-img-w: 160px; --media-img-h: 96px; }
+  .att-preview img { width: var(--att-preview-img-w); height: var(--att-preview-img-h); }
 }
 
 /* reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .message-bubble, .message-row, .forum-list, .composer { transition: none !important; animation: none !important; }
+@media (prefers-reduced-motion: reduce){
+  .message-bubble, .forum-list { transition: none !important; animation: none !important; }
 }

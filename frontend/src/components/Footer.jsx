@@ -37,9 +37,8 @@ export default function Footer() {
             <li><Link to="/about" onClick={() => window.scrollTo(0, 0)}>About</Link></li>
             <li><Link to="/partner" onClick={() => window.scrollTo(0, 0)}>Partner</Link></li>
             <li><Link to="/gallery" onClick={() => window.scrollTo(0, 0)}>Gallery</Link></li>
-            {/* ✅ confirmed lowercase route */}
             <li><Link to="/forum" onClick={() => window.scrollTo(0, 0)}>Community</Link></li>
-            <li><Link to="/contact" onClick={() => window.scrollTo(0, 0)}>Contact</Link></li>
+            <li><Link to="/dashboard" onClick={() => window.scrollTo(0, 0)}>dashboard</Link></li>
           </ul>
         </div>
 
