@@ -209,3 +209,164 @@
     height: 30px;
   }
 }
+
+/* ============================
+   Avatar + Dropdown additions
+   ============================ */
+
+/* Ensure the avatar uses the same sizing as the login button
+   The avatar is applied by adding the class .avatar-btn to a button that already uses .login-btn */
+.avatar-btn {
+  width: calc( (1em * 0) + 3.2rem ); /* fallback sizing if needed */
+  min-width: 40px; /* ensure circle min size */
+  height: auto;
+  padding: 0; /* we want a perfect circle, so override horizontal padding */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1;
+  aspect-ratio: 1 / 1; /* keep it square then apply border radius */
+  overflow: hidden;
+  text-transform: uppercase;
+}
+
+/* If .login-btn defines padding/height, we want avatar to match height visually.
+   To ensure close visual parity, we force a computed height based on existing login-btn styles.
+   If you have a different computed height for .login-btn, tweak the min-width to match. */
+.login-btn.avatar-btn {
+  padding: 0; /* override horizontal padding so width = height */
+}
+
+/* Avatar wrapper positions dropdown */
+.avatar-wrapper {
+  position: relative;
+}
+
+/* Glass dropdown */
+.glass-dropdown {
+  position: absolute;
+  right: 0;
+  margin-top: 12px;
+  min-width: 240px;
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+  z-index: 1000;
+}
+
+/* menu header with bigger avatar and name */
+.menu-header {
+  display:flex;
+  gap: 12px;
+  align-items:center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  margin-bottom: 8px;
+}
+
+.menu-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  font-size: 1.05rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  color: #E3D095;
+}
+
+.menu-user .menu-name {
+  font-weight:700;
+  font-size: 0.95rem;
+  color: #E3D095;
+}
+.menu-user .menu-email {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin-top: 2px;
+  color: #E3D095;
+}
+
+/* menu list */
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.menu-list li {
+  padding: 10px 8px;
+  cursor: pointer;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #E3D095;
+}
+.menu-list li:hover {
+  background: rgba(255,255,255,0.02);
+}
+.menu-list li.logout {
+  color: #ff7b7b;
+  margin-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.02);
+}
+
+/* small responsiveness for dropdown */
+@media screen and (max-width: 480px) {
+  .glass-dropdown {
+    right: 8px;
+    left: 8px;
+    min-width: auto;
+  }
+  .menu-avatar { width: 42px; height: 42px; }
+}
+
+/* Portal dropdown override (when rendered into document.body) */
+.portal-dropdown {
+  /* position: fixed is set inline from React so we still allow top/left placement */
+  transform-origin: top right;
+  z-index: 2000; /* high so it floats above everything */
+  min-width: 240px;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+}
+
+/* small arrow (optional) */
+.portal-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 18px; /* tweak so arrow points at avatar */
+  width: 12px;
+  height: 12px;
+  transform: rotate(45deg);
+  background: rgba(255,255,255,0.05);
+  border-left: 1px solid rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(255,255,255,0.12);
+  backdrop-filter: blur(6px);
+}
+
+/* slightly larger click area for the avatar button on mobile */
+.avatar-btn {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* ensure portal dropdown responsive tweaks */
+@media screen and (max-width: 480px) {
+  .portal-dropdown {
+    left: 8px !important;
+    right: 8px !important;
+    top: calc(var(--portal-top, 0px) + 8px) !important;
+    max-width: calc(100vw - 16px);
+  }
+  .portal-dropdown::before { display: none; }
+}

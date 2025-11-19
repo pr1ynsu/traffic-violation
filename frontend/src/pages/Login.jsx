@@ -121,6 +121,8 @@ export default function Login() {
           mockSaveUser(newUser);
           localStorage.setItem("token", `mock-token-${newUser.id}`);
           localStorage.setItem("current_user", JSON.stringify(newUser));
+          // Notify other windows/components that user changed
+          window.dispatchEvent(new Event("userChanged"));
           setMessage({ type: "success", text: "Registered (mock). Redirecting..." });
           await sleep(600);
           navigate("/forum");
@@ -136,6 +138,8 @@ export default function Login() {
         }
         localStorage.setItem("token", `mock-token-${user.id}`);
         localStorage.setItem("current_user", JSON.stringify(user));
+        // Notify other windows/components that user changed
+        window.dispatchEvent(new Event("userChanged"));
         setMessage({ type: "success", text: "Login successful (mock). Redirecting..." });
         await sleep(400);
         navigate("/forum");
@@ -167,7 +171,11 @@ export default function Login() {
       }
 
       if (data.token) localStorage.setItem("token", data.token);
-      if (data.user) localStorage.setItem("current_user", JSON.stringify(data.user));
+      if (data.user) {
+        localStorage.setItem("current_user", JSON.stringify(data.user));
+        // Notify other windows/components that user changed
+        window.dispatchEvent(new Event("userChanged"));
+      }
       setMessage({ type: "success", text: isRegister ? "Registered. Redirecting..." : "Logged in. Redirecting..." });
       setTimeout(() => navigate("/forum"), 500);
     } catch (err) {

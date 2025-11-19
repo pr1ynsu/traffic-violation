@@ -1,0 +1,6 @@
+- [ ] Update AuthProvider.jsx to match reference code (user state, login(role), isAuthenticated, role)
+- [ ] Update Login.jsx to use login(role) and navigate to '/challan-info' after login/register
+- [ ] Update ChallanInfo.jsx to act as redirector using Navigate based on role
+- [ ] Update App.jsx to add direct routes for /user/challan and /gov/challan, protected, before wildcard routes
+- [ ] Rename PrivateRoute to ProtectedRoute if necessary
+- [ ] Test the routing flow
