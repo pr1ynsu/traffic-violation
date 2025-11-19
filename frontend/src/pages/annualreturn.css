@@ -1,0 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-deep: #0f234f;
+  --panel: rgba(255,255,255,0.04);
+  --glass: rgba(255,255,255,0.08);
+  --cream: #fffdf0;
+  --muted: rgba(255,255,255,0.6);
+  --accent: #e8cf4a;
+}
+
+/* page */
+.ar-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(180deg,#07143a 0%, var(--bg-deep) 60%);
+  color: #fff;
+  font-family: 'Poppins', system-ui, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* hero */
+.ar-hero {
+  max-width: 900px;
+  text-align: center;
+  margin-bottom: 36px;
+  padding: 28px 20px;
+  background: var(--panel);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.05);
+  box-shadow: 0 12px 40px rgba(2,6,20,0.45);
+}
+
+.ar-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.ar-subtitle {
+  font-size: 1.05rem;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* content wrapper */
+.ar-content {
+  width: 100%;
+  max-width: 860px;
+  padding: 24px;
+  background: linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(2,6,25,0.55);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* sections */
+.ar-section {
+  margin-bottom: 28px;
+}
+
+.ar-section-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+.ar-small-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.ar-text {
+  color: #fff;
+  line-height: 1.5;
+}
+
+.ar-list {
+  padding-left: 20px;
+  color: #fff;
+  line-height: 1.5;
+}
+
+.ar-divider {
+  border: none;
+  height: 1px;
+  margin: 24px 0;
+  background: rgba(255,255,255,0.08);
+}
+
+/* meta */
+.ar-footnote {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.ar-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.ar-link:hover {
+  text-decoration: underline;
+}
+
+/* responsive */
+@media (max-width: 760px) {
+  .ar-content {
+    padding: 16px;
+  }
+
+  .ar-title {
+    font-size: 1.8rem;
+  }
+
+  .ar-section-title {
+    font-size: 1.25rem;
+  }
+}
