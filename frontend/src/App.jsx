@@ -30,8 +30,7 @@ import UserCredits from "./pages/User/Credits";
 import UserViolations from "./pages/User/Violations";
 
 // government pages (match files in frontend/src/pages/Gov/)
-// note: rename the file on disk to GovDashboard.jsx if possible. For now we import using the current filename.
-import GovDashboard from "./pages/Gov/GovDashboard.jsx.jsx";
+import GovDashboard from "./pages/Gov/GovDashboard";
 import GovChallan from "./pages/Gov/Challan";
 import GovCredits from "./pages/Gov/Credits";
 import GovViolations from "./pages/Gov/Violations";

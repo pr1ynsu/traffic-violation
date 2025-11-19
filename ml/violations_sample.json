@@ -7,7 +7,8 @@
     "violation_text": "Illegal parking",
     "offender_name": "J",
     "challan_rupees": 973,
-    "credits_rupees": 98
+    "credits_rupees": 98,
+    "proof_image": "proof_images/c053f2cc.jpg"
   },
   {
     "id": "541eca7a",
@@ -17,7 +18,8 @@
     "violation_text": "Running red light",
     "offender_name": "E",
     "challan_rupees": 1124,
-    "credits_rupees": 123
+    "credits_rupees": 123,
+    "proof_image": "proof_images/541eca7a.jpg"
   },
   {
     "id": "3b3d7014",
@@ -27,7 +29,8 @@
     "violation_text": "No seatbelt",
     "offender_name": "W",
     "challan_rupees": 687,
-    "credits_rupees": 117
+    "credits_rupees": 117,
+    "proof_image": "proof_images/3b3d7014.jpg"
   },
   {
     "id": "62b0a0bf",
@@ -37,7 +40,8 @@
     "violation_text": "Expired registration",
     "offender_name": "L",
     "challan_rupees": 1461,
-    "credits_rupees": 329
+    "credits_rupees": 329,
+    "proof_image": "proof_images/62b0a0bf.jpg"
   },
   {
     "id": "6fd52c86",
@@ -47,7 +51,8 @@
     "violation_text": "No seatbelt",
     "offender_name": "U",
     "challan_rupees": 1345,
-    "credits_rupees": 412
+    "credits_rupees": 412,
+    "proof_image": "proof_images/6fd52c86.jpg"
   },
   {
     "id": "c9f52b4e",
@@ -57,7 +62,8 @@
     "violation_text": "Running red light",
     "offender_name": "O",
     "challan_rupees": 2466,
-    "credits_rupees": 326
+    "credits_rupees": 326,
+    "proof_image": "proof_images/c9f52b4e.jpg"
   },
   {
     "id": "2d9ded09",
@@ -67,7 +73,8 @@
     "violation_text": "Illegal parking",
     "offender_name": "A",
     "challan_rupees": 798,
-    "credits_rupees": 301
+    "credits_rupees": 301,
+    "proof_image": "proof_images/2d9ded09.jpg"
   },
   {
     "id": "1519a8a9",
@@ -77,7 +84,8 @@
     "violation_text": "Speeding above limit",
     "offender_name": "D",
     "challan_rupees": 2212,
-    "credits_rupees": 210
+    "credits_rupees": 210,
+    "proof_image": "proof_images/1519a8a9.jpg"
   },
   {
     "id": "c5509eaa",
@@ -87,7 +95,8 @@
     "violation_text": "Helmet missing (two-wheeler)",
     "offender_name": "D",
     "challan_rupees": 420,
-    "credits_rupees": 53
+    "credits_rupees": 53,
+    "proof_image": "proof_images/c5509eaa.jpg"
   },
   {
     "id": "6400c9a9",
@@ -97,6 +106,7 @@
     "violation_text": "No seatbelt",
     "offender_name": "U",
     "challan_rupees": 1405,
-    "credits_rupees": 152
+    "credits_rupees": 152,
+    "proof_image": "proof_images/6400c9a9.jpg"
   }
 ]
