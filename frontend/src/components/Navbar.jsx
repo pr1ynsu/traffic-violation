@@ -8,7 +8,6 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollY = useRef(0);
-  const isHomePage = location.pathname === "/";
 
   // load user from localStorage
   const [user, setUser] = useState(() => {
@@ -20,9 +19,9 @@ export default function Navbar() {
   });
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const avatarBtnRef = useRef(null);      // ref to the avatar button
-  const portalRef = useRef(null);         // ref to the portal dropdown DOM node
-  const [coords, setCoords] = useState({ top: 0, left: 0 }); // fixed coords for portal
+  const avatarBtnRef = useRef(null);
+  const portalRef = useRef(null);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     function handleScroll() {
@@ -38,7 +37,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Listen for events when user is changed (from Login.jsx) and storage events (other tabs)
   useEffect(() => {
     function onUserChanged() {
       try {
@@ -58,30 +56,20 @@ export default function Navbar() {
     };
   }, []);
 
-  // compute and set portal coords: call whenever we open menu or on resize/scroll while open
   function computeAndSetCoords() {
     const btn = avatarBtnRef.current;
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
-
-    // desired dropdown width (should match CSS min-width); we'll use 260 as safe default
     const dropdownWidth = 260;
-    // initial left aligns dropdown's right to the button's right
-    // but we clamp so it doesn't overflow the viewport
-    const spaceRight = window.innerWidth - rect.right;
-    let left = rect.right - dropdownWidth; // try align right edges
-    if (left < 8) left = Math.max(8, rect.left); // if too far left, align to button's left but not <8px
+    let left = rect.right - dropdownWidth;
+    if (left < 8) left = Math.max(8, rect.left);
     if (rect.left + dropdownWidth + 8 > window.innerWidth) {
-      // clamp to fit
       left = Math.max(8, window.innerWidth - dropdownWidth - 8);
     }
-    // top should be just below the button
     const top = rect.bottom + 12;
-
     setCoords({ top: Math.round(top), left: Math.round(left) });
   }
 
-  // open/close menu and compute coords
   function toggleMenu() {
     if (!menuOpen) {
       computeAndSetCoords();
@@ -91,27 +79,25 @@ export default function Navbar() {
     }
   }
 
-  // update coords on resize/scroll while menu is open
   useEffect(() => {
     if (!menuOpen) return;
     function onResize() {
       computeAndSetCoords();
     }
     window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onResize, true); // capture scrolls anywhere
+    window.addEventListener("scroll", onResize, true);
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onResize, true);
     };
   }, [menuOpen]);
 
-  // click outside to close dropdown — check both avatar button and portal dropdown nodes
   useEffect(() => {
     function onDocClick(e) {
       const btn = avatarBtnRef.current;
       const portalNode = portalRef.current;
-      if (btn && btn.contains(e.target)) return; // clicked avatar -> ignore (avatar toggles separately)
-      if (portalNode && portalNode.contains(e.target)) return; // clicked inside portal -> ignore
+      if (btn && btn.contains(e.target)) return;
+      if (portalNode && portalNode.contains(e.target)) return;
       setMenuOpen(false);
     }
     if (menuOpen) document.addEventListener("mousedown", onDocClick);
@@ -123,88 +109,147 @@ export default function Navbar() {
     return name.trim()[0].toUpperCase();
   }
 
+  // Remove current_user from saved_profiles then clear current_user and token
   function handleLogout() {
+    try {
+      const current = JSON.parse(localStorage.getItem("current_user"));
+      if (current) {
+        const raw = localStorage.getItem("saved_profiles") || "[]";
+        const arr = JSON.parse(raw);
+        const filtered = arr.filter(
+          (p) =>
+            !(
+              (p.id && current.id && p.id === current.id) ||
+              (p.email && current.email && p.email === current.email)
+            )
+        );
+        localStorage.setItem("saved_profiles", JSON.stringify(filtered));
+      }
+    } catch (err) {
+      console.error("logout cleanup error:", err);
+    }
     localStorage.removeItem("token");
     localStorage.removeItem("current_user");
     window.dispatchEvent(new Event("userChanged"));
     setMenuOpen(false);
-    navigate("/");
+    navigate("/login");
   }
 
-  // Portal dropdown element
-  const dropdown = menuOpen ? createPortal(
-    <div
-      ref={portalRef}
-      className="glass-dropdown portal-dropdown"
-      role="menu"
-      style={{
-        position: "fixed",
-        top: `${coords.top}px`,
-        left: `${coords.left}px`,
-        minWidth: 240,
-      }}
-    >
-      <div className="menu-header">
-        <div className="menu-avatar">{getInitial(user?.name)}</div>
-        <div className="menu-user">
-          <div className="menu-name">{user?.name}</div>
-          <div className="menu-email">{user?.email}</div>
-        </div>
-      </div>
+  // go to dashboard depending on role
+  function goToDashboard() {
+    try {
+      const raw = localStorage.getItem("current_user");
+      if (!raw) {
+        navigate("/login");
+        return;
+      }
+      const cur = JSON.parse(raw);
+      const type = (cur.userType || "").toString().trim().toLowerCase();
+      if (type === "government" || type === "gov" || type === "admin") {
+        navigate("/gov/dashboard");
+      } else {
+        navigate("/user/dashboard");
+      }
+    } catch (err) {
+      console.error("goToDashboard error", err);
+      navigate("/login");
+    } finally {
+      setMenuOpen(false);
+    }
+  }
 
-      <ul className="menu-list">
-        <li onClick={() => { setMenuOpen(false); navigate("/switch-user"); }}>Switch user</li>
-        <li onClick={() => { setMenuOpen(false); navigate("/settings"); }}>Settings</li>
-        <li onClick={() => { setMenuOpen(false); navigate("/notifications"); }}>Notifications</li>
-        <li className="logout" onClick={handleLogout}>Log out</li>
-      </ul>
-    </div>,
-    document.body
-  ) : null;
+  const dropdown = menuOpen
+    ? createPortal(
+        <div
+          ref={portalRef}
+          className="glass-dropdown portal-dropdown"
+          role="menu"
+          style={{
+            position: "fixed",
+            top: `${coords.top}px`,
+            left: `${coords.left}px`,
+            minWidth: 240,
+          }}
+        >
+          <div className="menu-header">
+            <div className="menu-avatar">{getInitial(user?.name)}</div>
+            <div className="menu-user">
+              <div className="menu-name">{user?.name}</div>
+              <div className="menu-email">{user?.email}</div>
+            </div>
+          </div>
+
+          <ul className="menu-list">
+            <li onClick={() => goToDashboard()}>Dashboard</li>
+            <li onClick={() => { setMenuOpen(false); navigate("/switch-user"); }}>Switch user</li>
+            <li onClick={() => { setMenuOpen(false); navigate("/settings"); }}>Settings</li>
+            <li onClick={() => { setMenuOpen(false); navigate("/notifications"); }}>Notifications</li>
+            <li className="logout" onClick={handleLogout}>Log out</li>
+          </ul>
+        </div>,
+        document.body
+      )
+    : null;
 
   return (
     <>
-      {isHomePage && (
-        <nav className={`navbar ${showNavbar ? "navbar-visible" : "navbar-hidden"}`}>
-          <div className="navbar-top">
-            <div className="logo-container">
-              <img src="/logo.jpg" alt="Logo" className="logo" />
-            </div>
-
-            <div className="login-container">
-              {!user ? (
-                <Link to="/login" className="login-link">
-                  <button className="login-btn">Sign Up / Log In</button>
-                </Link>
-              ) : (
-                <div className="avatar-wrapper">
-                  <button
-                    ref={avatarBtnRef}
-                    className="login-btn avatar-btn"
-                    onClick={toggleMenu}
-                    aria-haspopup="true"
-                    aria-expanded={menuOpen}
-                    title={user?.name || "User"}
-                  >
-                    {getInitial(user.name)}
-                  </button>
-                </div>
-              )}
-            </div>
+      {/* We allow App to decide when Navbar is mounted.
+          Navbar renders its full UI (no extra isHomePage gate). */}
+      <nav className={`navbar ${showNavbar ? "navbar-visible" : "navbar-hidden"}`}>
+        <div className="navbar-top">
+          <div className="logo-container">
+            <img src="/logo.jpg" alt="Logo" className="logo" />
           </div>
 
-          <div className="navbar-links">
-            <ul>
-              <li><Link to="/" onClick={() => window.scrollTo(0, 0)}>Home</Link></li>
-              <li><Link to="/about" onClick={() => window.scrollTo(0, 0)}>About</Link></li>
-              <li><Link to="/partner" onClick={() => window.scrollTo(0, 0)}>Partner</Link></li>
-              <li><Link to="/gallery" onClick={() => window.scrollTo(0, 0)}>Gallery</Link></li>
-              <li><Link to="/Forum" onClick={() => window.scrollTo(0, 0)}>Community</Link></li>
-              <li><Link to="/contact" onClick={() => window.scrollTo(0, 0)}>Contact</Link></li>
-            </ul>
+          <div className="login-container">
+            {!user ? (
+              <Link to="/login" className="login-link">
+                <button className="login-btn">Sign Up / Log In</button>
+              </Link>
+            ) : (
+              <div className="avatar-wrapper">
+                <button
+                  ref={avatarBtnRef}
+                  className="login-btn avatar-btn"
+                  onClick={toggleMenu}
+                  aria-haspopup="true"
+                  aria-expanded={menuOpen}
+                  title={user?.name || "User"}
+                >
+                  {getInitial(user.name)}
+                </button>
+              </div>
+            )}
           </div>
-        </nav>
-      )}
+        </div>
+
+        <div className="navbar-links">
+          <ul>
+            <li>
+              <Link to="/" onClick={() => window.scrollTo(0, 0)}>Home</Link>
+            </li>
+            <li>
+              <Link to="/about" onClick={() => window.scrollTo(0, 0)}>About</Link>
+            </li>
+            <li>
+              <Link to="/partner" onClick={() => window.scrollTo(0, 0)}>Partner</Link>
+            </li>
+            <li>
+              <Link to="/gallery" onClick={() => window.scrollTo(0, 0)}>Gallery</Link>
+            </li>
+            <li>
+              <Link to="/Forum" onClick={() => window.scrollTo(0, 0)}>Community</Link>
+            </li>
+            <li>
+              <Link to="/contact" onClick={() => window.scrollTo(0, 0)}>Contact</Link>
+            </li>
+            <li>
+              <Link to="/dashboard" onClick={() => window.scrollTo(0, 0)}>Dashboard</Link>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
       {dropdown}
     </>
   );

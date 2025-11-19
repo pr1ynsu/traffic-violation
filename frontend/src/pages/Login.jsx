@@ -14,6 +14,42 @@ const API_BASE = "http://localhost:5000";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const uid = () => `u_${Date.now()}_${Math.random().toString(36).slice(2,6)}`;
 
+/* Utility: persist user into saved_profiles (localStorage)
+   - keeps newest at front
+   - avoids duplicates by id or email
+*/
+function saveProfileToSavedProfiles(user) {
+  if (!user) return;
+  try {
+    const raw = localStorage.getItem("saved_profiles") || "[]";
+    const arr = JSON.parse(raw);
+    // dedupe by id or email
+    const existsIndex = arr.findIndex(
+      (p) => (p.id && user.id && p.id === user.id) || (p.email && user.email && p.email === user.email)
+    );
+    if (existsIndex >= 0) {
+      // move to front
+      const existing = arr.splice(existsIndex, 1)[0];
+      arr.unshift(existing);
+    } else {
+      // keep only essential fields to reduce localStorage size
+      const toSave = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        userType: user.userType || "User"
+      };
+      arr.unshift(toSave);
+    }
+    // optional: cap saved profiles to 8
+    const capped = arr.slice(0, 8);
+    localStorage.setItem("saved_profiles", JSON.stringify(capped));
+  } catch (err) {
+    console.error("saveProfileToSavedProfiles error", err);
+  }
+}
+
 export default function Login() {
   const { role } = useParams();
   const navigate = useNavigate();
@@ -121,11 +157,17 @@ export default function Login() {
           mockSaveUser(newUser);
           localStorage.setItem("token", `mock-token-${newUser.id}`);
           localStorage.setItem("current_user", JSON.stringify(newUser));
+
+          // save to saved_profiles
+          saveProfileToSavedProfiles(newUser);
+
           // Notify other windows/components that user changed
           window.dispatchEvent(new Event("userChanged"));
-          setMessage({ type: "success", text: "Registered (mock). Redirecting..." });
+
+          setMessage({ type: "success", text: "Registered (mock). Redirecting to login..." });
           await sleep(600);
-          navigate("/forum");
+          // Redirect to login page after sign up
+          navigate("/login");
           return;
         }
 
@@ -138,11 +180,16 @@ export default function Login() {
         }
         localStorage.setItem("token", `mock-token-${user.id}`);
         localStorage.setItem("current_user", JSON.stringify(user));
+
+        // save to saved_profiles
+        saveProfileToSavedProfiles(user);
+
         // Notify other windows/components that user changed
         window.dispatchEvent(new Event("userChanged"));
-        setMessage({ type: "success", text: "Login successful (mock). Redirecting..." });
+        setMessage({ type: "success", text: "Login successful (mock). Redirecting home..." });
         await sleep(400);
-        navigate("/forum");
+        // Redirect to home page after login
+        navigate("/");
         return;
       }
 
@@ -173,11 +220,20 @@ export default function Login() {
       if (data.token) localStorage.setItem("token", data.token);
       if (data.user) {
         localStorage.setItem("current_user", JSON.stringify(data.user));
+        // save to saved_profiles
+        saveProfileToSavedProfiles(data.user);
         // Notify other windows/components that user changed
         window.dispatchEvent(new Event("userChanged"));
       }
-      setMessage({ type: "success", text: isRegister ? "Registered. Redirecting..." : "Logged in. Redirecting..." });
-      setTimeout(() => navigate("/forum"), 500);
+
+      // Real-backend redirect behaviour:
+      if (isRegister) {
+        setMessage({ type: "success", text: "Registered. Redirecting to login..." });
+        setTimeout(() => navigate("/login"), 500);
+      } else {
+        setMessage({ type: "success", text: "Logged in. Redirecting home..." });
+        setTimeout(() => navigate("/"), 500);
+      }
     } catch (err) {
       console.error(err);
       setMessage({ type: "error", text: "Network error" });

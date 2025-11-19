@@ -1,0 +1,150 @@
+/* src/pages/dashboard.css
+   Main (generic) dashboard styles, with safe bottom-nav rules.
+*/
+
+:root {
+  --footer-height: 80px;        /* adjust if your footer is taller */
+  --bottom-nav-height: 72px;    /* height of the fixed bottom nav */
+  --bottom-gap: calc(var(--footer-height) + 18px); /* nav sits 18px above footer */
+  --max-nav-width: 760px;
+  --nav-item-max: 160px;
+}
+
+/* page */
+.dashboard-page {
+  min-height: 100vh;
+  padding-bottom: calc(var(--footer-height) + var(--bottom-nav-height) + 44px); /* reserve safe space */
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.04));
+  font-family: serif;
+  color: #E3D095;
+  box-sizing: border-box;
+}
+
+/* glass boxes */
+.glass-box {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+  backdrop-filter: blur(8px);
+  margin: 16px;
+  box-sizing: border-box;
+}
+
+/* header */
+.dash-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  max-width: 1000px;
+  margin: 1.2rem auto 0.6rem;
+  padding: 12px;
+}
+.big-initial { width:72px; height:72px; border-radius:999px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size: 1.6rem; color:#E3D095; background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); }
+
+/* main content */
+.dash-main {
+  max-width: 1000px;
+  margin: 0 auto 90px;
+  padding: 18px;
+}
+.dash-main h2 { margin-top: 0; color: #E3D095; }
+
+/* info grid */
+.info-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.info-row { display:flex; flex-direction:column; gap:6px; background: rgba(0,0,0,0.02); padding:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.02); }
+.info-label { font-size:0.85rem; opacity:0.9; color:#cbbf8f; }
+.info-value { font-weight:700; color:#E3D095; }
+
+/* =========================
+   BOTTOM NAV (generic rules)
+   - Works if buttons are placed directly inside nav
+   - or inside a .nav-inner wrapper
+   ========================= */
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--bottom-gap);
+  width: min(var(--max-nav-width), calc(100% - 32px));
+  height: var(--bottom-nav-height);
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  z-index: 9999;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  pointer-events: auto;
+  will-change: auto;
+}
+
+/* If you use .nav-inner wrapper (recommended) */
+.bottom-nav .nav-inner {
+  width: 100%;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:nowrap; /* no wrapping */
+}
+
+/* If you put items directly as children of nav (buttons), ensure they stay on one line */
+.bottom-nav > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* nav item cell */
+.nav-item {
+  background: transparent;
+  border: none;
+  color: #E3D095;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: transform 0.15s ease, background 0.15s ease;
+  flex: 1 1 0;            /* evenly distribute */
+  min-width: 72px;
+  max-width: var(--nav-item-max);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-item:hover { transform: translateY(-4px); background: rgba(255,255,255,0.02); }
+
+/* svg/icon sizing */
+.icon { width: 22px; height: 22px; display:block; flex:0 0 auto; }
+
+/* label */
+.nav-item span { display:block; font-size:0.82rem; color:#E3D095; }
+
+/* responsive */
+@media (max-width: 720px) {
+  :root { --max-nav-width: calc(100% - 24px); --nav-item-max: 140px; }
+  .bottom-nav { height: 76px; --bottom-nav-height: 76px; }
+  .icon { width:20px; height:20px; }
+  .nav-item span { font-size:0.78rem; }
+}
+@media (max-width: 420px) {
+  .bottom-nav { height: 84px; --bottom-nav-height: 84px; bottom: calc(var(--footer-height) + 12px); }
+  .nav-item span { font-size:0.75rem; }
+}
+
+/* end of file */
