@@ -1,0 +1,16 @@
+id,timestamp,vehicle_number,violation_code,violation_text,offender_name,challan_rupees,credits_rupees,proof_image
+c053f2cc,2025-10-14T04:33:27,WA67XR748,108,Illegal parking,J,973,98,proof_images/c053f2cc.jpg
+541eca7a,2025-10-09T23:09:02,LA99I7578,102,Running red light,E,1124,123,proof_images/541eca7a.jpg
+3b3d7014,2025-10-26T15:10:12,GR2B7520,104,No seatbelt,W,687,117,proof_images/3b3d7014.jpg
+62b0a0bf,2025-10-13T22:42:26,UL74LS9319,107,Expired registration,L,1461,329,proof_images/62b0a0bf.jpg
+6fd52c86,2025-10-24T10:35:44,IV89A8751,104,No seatbelt,U,1345,412,proof_images/6fd52c86.jpg
+c9f52b4e,2025-09-30T06:44:43,RI97O1680,102,Running red light,O,2466,326,proof_images/c9f52b4e.jpg
+2d9ded09,2025-10-19T16:17:24,TC46CT3085,108,Illegal parking,A,798,301,proof_images/2d9ded09.jpg
+1519a8a9,2025-10-26T08:32:38,KH70WQ7939,101,Speeding above limit,D,2212,210,proof_images/1519a8a9.jpg
+c5509eaa,2025-10-02T19:53:37,WI7W9749,109,Helmet missing (two-wheeler),D,420,53,proof_images/c5509eaa.jpg
+6400c9a9,2025-10-13T04:33:16,GA41ZN781,104,No seatbelt,U,1405,152,proof_images/6400c9a9.jpg
+c5509eaa1,2025-10-05T12:44:11,OD01AB4523,101,Speeding above limit,M,1780,245,proof_images/c5509eaa.jpg
+c5509eaa2,2025-10-11T09:27:58,OD01AB4523,108,Illegal parking,R,920,110,proof_images/c5509eaa.jpg
+c5509eaa3,2025-10-18T18:03:22,OD01AB4523,104,No seatbelt,T,1340,198,proof_images/c5509eaa.jpg
+c5509eaa4,2025-10-22T07:56:40,OD01AB4523,109,Helmet missing (two-wheeler),P,480,60,proof_images/c5509eaa.jpg
+c5509eaa5,2025-10-29T21:14:09,OD01AB4523,107,Expired registration,K,1590,305,proof_images/c5509eaa.jpg

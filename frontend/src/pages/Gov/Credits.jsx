@@ -1,14 +1,18 @@
 // src/pages/Gov/Credits.jsx
 import React from "react";
 import RecordsTable from "../../components/RecordsTable";
-import mockFetcher from "../../utils/mockFetcher";
+import govFetcher from "../../utils/govFetcher";
 
 export default function Credits() {
   const columns = [
-    { key: "vehicle", label: "Vehicle No." },
-    { key: "credits", label: "Credits" },
+    { key: "id", label: "ID" },
     { key: "timestamp", label: "Timestamp" },
-    { key: "ownerName", label: "Owner" },
+    { key: "vehicleNumber", label: "Vehicle No." },
+    { key: "violationCode", label: "Violation Code" },
+    { key: "violationText", label: "Violation" },
+    { key: "offenderName", label: "Offender" },
+    { key: "challanRupees", label: "Challan (₹)" },
+    { key: "creditsRupees", label: "Credits (₹)" },
   ];
-  return <RecordsTable columns={columns} fetcher={mockFetcher} type="credits" role="gov" />;
+  return <RecordsTable columns={columns} fetcher={govFetcher} type="credits" role="gov" />;
 }

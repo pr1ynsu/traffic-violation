@@ -1,6 +1,7 @@
 // src/components/RecordsTable.jsx
 import React, { useEffect, useState, useCallback } from "react";
 import "./RecordsTable.css"; // optional: lightweight styles (see note below)
+import ViolationImage from "./ViolationImage";
 
 /*
  Props:
@@ -16,7 +17,7 @@ import "./RecordsTable.css"; // optional: lightweight styles (see note below)
 */
 
 export default function RecordsTable({ columns = [], fetcher = null, type = "all", role = "user" }) {
-  const [user, setUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,7 +34,7 @@ export default function RecordsTable({ columns = [], fetcher = null, type = "all
   }, []);
 
   useEffect(() => {
-    setUser(loadUser());
+    setCurrentUser(loadUser());
   }, [loadUser]);
 
   // helper: normalize vehicle strings to compare
@@ -76,16 +77,36 @@ export default function RecordsTable({ columns = [], fetcher = null, type = "all
   // Resolve proof image URL for a row
   function resolveProofUrl(row) {
     // priority: explicit proof_image field -> paths commonly used by project -> API endpoints
-    if (row.proof_image) return row.proof_image;
+    if (row.proof_image) {
+      // Extract filename from proof_image path (e.g., "proof_images/c053f2cc.jpg" -> "c053f2cc.jpg")
+      const filename = row.proof_image.split('/').pop();
+      return `/proof_image/${filename}`;
+    }
     if (row.proofImage) return row.proofImage;
     if (row.image) return row.image;
     const id = row.id || row.record_id || row._id;
     if (id) {
       // try common server paths (adjust if your backend differs)
-      return `/proof_images/${id}.jpg`;
+      return `/proof_image/${id}.jpg`;
     }
     // last resort: try vehicle+timestamp filename (not guaranteed)
     return null;
+  }
+
+  // Helper function to parse CSV text into array of objects
+  function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim());
+    const rows = lines.slice(1).map(line => {
+      const values = line.split(',');
+      const obj = {};
+      headers.forEach((header, i) => {
+        obj[header] = values[i]?.trim() || '';
+      });
+      return obj;
+    });
+    return rows;
   }
 
   useEffect(() => {
@@ -94,36 +115,20 @@ export default function RecordsTable({ columns = [], fetcher = null, type = "all
       setLoading(true);
       setError(null);
       try {
-        const cur = loadUser();
         // If custom fetcher provided, call it
         let fetched = [];
         if (typeof fetcher === "function") {
           // allow fetcher to accept an object with context
-          fetched = await fetcher({ role, user: cur, type });
+          fetched = await fetcher({ role, type });
         } else {
-          // fallback: try backend endpoints
-          // prefer license-based endpoint if license present
-          const license = cur?.license;
-          const vehicle = cur?.vehicle;
-          if (license) {
-            const ep = `/api/violations/license/${encodeURIComponent(String(license))}`;
-            const res = await fetch(ep);
-            if (!res.ok) throw new Error(`Failed loading violations for license: ${res.status}`);
-            fetched = await res.json();
-          } else if (vehicle) {
-            // try vehicle endpoint (if exists)
-            const ep = `/api/violations/vehicle/${encodeURIComponent(String(vehicle))}`;
-            const res = await fetch(ep);
-            if (res.ok) {
-              fetched = await res.json();
-            } else {
-              // fallback to all violations and filter client-side
-              const res2 = await fetch(`/api/violations`);
-              if (!res2.ok) throw new Error("Failed loading violations");
-              fetched = await res2.json();
-            }
+          // For user-challan type, fetch CSV from backend
+          if (type === "user-challan") {
+            const res = await fetch('/api/violations/data/violations.csv');
+            if (!res.ok) throw new Error("Failed loading CSV data");
+            const csvText = await res.text();
+            fetched = parseCSV(csvText);
           } else {
-            // no user identifiers — load all and filter (will be empty)
+            // fallback: try backend endpoints
             const res = await fetch(`/api/violations`);
             if (!res.ok) throw new Error("Failed loading violations");
             fetched = await res.json();
@@ -136,10 +141,17 @@ export default function RecordsTable({ columns = [], fetcher = null, type = "all
           else fetched = [];
         }
 
-        // filter to rows belonging to user
-        const filtered = (fetched || []).filter((r) => belongsToUser(r, cur));
-        if (!mounted) return;
-        setRows(filtered);
+        // For gov role, no filtering needed
+        if (role === 'gov') {
+          if (!mounted) return;
+          setRows(fetched);
+        } else {
+          // For user role, filter based on user data
+          const cur = loadUser();
+          const filtered = (fetched || []).filter((r) => belongsToUser(r, cur));
+          if (!mounted) return;
+          setRows(filtered);
+        }
       } catch (err) {
         console.error("RecordsTable load error:", err);
         if (mounted) setError(err.message || "Failed to load records");
@@ -229,10 +241,11 @@ export default function RecordsTable({ columns = [], fetcher = null, type = "all
           <div className="rt-modal">
             <button className="rt-modal-close" onClick={closeModal} aria-label="Close">✕</button>
             <div className="rt-modal-body">
-              {modal.src ? (
-                // use img with natural size fit
-                <img src={modal.src} alt={`proof-${modal.id || ""}`} style={{ maxWidth: "100%", maxHeight: "80vh", display: "block", margin: "0 auto" }} />
-              ) : (
+              <ViolationImage
+                src={modal.src}
+                alt={`proof-${modal.id || ""}`}
+              />
+              {!modal.src && (
                 <div className="rt-no-image">
                   <div>No proof image available</div>
                   <pre style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{JSON.stringify(modal.row || {}, null, 2)}</pre>

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "c053f2cc",
+    "timestamp": "2025-10-14T04:33:27",
+    "vehicle_number": "WA67XR748",
+    "violation_code": 108,
+    "violation_text": "Illegal parking",
+    "offender_name": "J",
+    "challan_rupees": 973,
+    "credits_rupees": 98,
+    "proof_image": "proof_images/c053f2cc.jpg"
+  },
+  {
+    "id": "541eca7a",
+    "timestamp": "2025-10-09T23:09:02",
+    "vehicle_number": "LA99I7578",
+    "violation_code": 102,
+    "violation_text": "Running red light",
+    "offender_name": "E",
+    "challan_rupees": 1124,
+    "credits_rupees": 123,
+    "proof_image": "proof_images/541eca7a.jpg"
+  },
+  {
+    "id": "3b3d7014",
+    "timestamp": "2025-10-26T15:10:12",
+    "vehicle_number": "GR2B7520",
+    "violation_code": 104,
+    "violation_text": "No seatbelt",
+    "offender_name": "W",
+    "challan_rupees": 687,
+    "credits_rupees": 117,
+    "proof_image": "proof_images/3b3d7014.jpg"
+  },
+  {
+    "id": "62b0a0bf",
+    "timestamp": "2025-10-13T22:42:26",
+    "vehicle_number": "UL74LS9319",
+    "violation_code": 107,
+    "violation_text": "Expired registration",
+    "offender_name": "L",
+    "challan_rupees": 1461,
+    "credits_rupees": 329,
+    "proof_image": "proof_images/62b0a0bf.jpg"
+  },
+  {
+    "id": "6fd52c86",
+    "timestamp": "2025-10-24T10:35:44",
+    "vehicle_number": "IV89A8751",
+    "violation_code": 104,
+    "violation_text": "No seatbelt",
+    "offender_name": "U",
+    "challan_rupees": 1345,
+    "credits_rupees": 412,
+    "proof_image": "proof_images/6fd52c86.jpg"
+  },
+  {
+    "id": "c9f52b4e",
+    "timestamp": "2025-09-30T06:44:43",
+    "vehicle_number": "RI97O1680",
+    "violation_code": 102,
+    "violation_text": "Running red light",
+    "offender_name": "O",
+    "challan_rupees": 2466,
+    "credits_rupees": 326,
+    "proof_image": "proof_images/c9f52b4e.jpg"
+  },
+  {
+    "id": "2d9ded09",
+    "timestamp": "2025-10-19T16:17:24",
+    "vehicle_number": "TC46CT3085",
+    "violation_code": 108,
+    "violation_text": "Illegal parking",
+    "offender_name": "A",
+    "challan_rupees": 798,
+    "credits_rupees": 301,
+    "proof_image": "proof_images/2d9ded09.jpg"
+  },
+  {
+    "id": "1519a8a9",
+    "timestamp": "2025-10-26T08:32:38",
+    "vehicle_number": "KH70WQ7939",
+    "violation_code": 101,
+    "violation_text": "Speeding above limit",
+    "offender_name": "D",
+    "challan_rupees": 2212,
+    "credits_rupees": 210,
+    "proof_image": "proof_images/1519a8a9.jpg"
+  },
+  {
+    "id": "c5509eaa",
+    "timestamp": "2025-10-02T19:53:37",
+    "vehicle_number": "WI7W9749",
+    "violation_code": 109,
+    "violation_text": "Helmet missing (two-wheeler)",
+    "offender_name": "D",
+    "challan_rupees": 420,
+    "credits_rupees": 53,
+    "proof_image": "proof_images/c5509eaa.jpg"
+  },
+  {
+    "id": "6400c9a9",
+    "timestamp": "2025-10-13T04:33:16",
+    "vehicle_number": "GA41ZN781",
+    "violation_code": 104,
+    "violation_text": "No seatbelt",
+    "offender_name": "U",
+    "challan_rupees": 1405,
+    "credits_rupees": 152,
+    "proof_image": "proof_images/6400c9a9.jpg"
+  }
+]
